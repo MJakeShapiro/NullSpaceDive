@@ -322,8 +322,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58972ed96bc5692459edd585bf43a8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 7
-  offMode: 4
+  beats: 4
+  offBeats: 1
   bpm: 120
   timeBetweenBeats: 0.5
   active: 0
