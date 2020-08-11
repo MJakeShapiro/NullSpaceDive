@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    
-    public List<Door> allDoors = new List<Door>();
-
     public LineRenderer lineRenderer; //FOR TESTING ONLY
+
+    public List<Door> allDoors = new List<Door>();
 
     private static MapGenerator instance;
     public static MapGenerator Instance
@@ -15,45 +14,48 @@ public class MapGenerator : MonoBehaviour
         get { return instance ?? (instance = new GameObject("MapGenerator").AddComponent<MapGenerator>()); }
     }
 
+
     private void OnEnable()
     {
         instance = this;
     }
 
+
     private void Start()
     {
-        lineRenderer.positionCount = allDoors.Count;
+        lineRenderer.positionCount = allDoors.Count; //FOR TESTING ONLY
         RandomlyAssignDoors();
     }
+
 
     /// <summary>
     /// Randomly assigns doors to create connected maze
     /// </summary>
     public void RandomlyAssignDoors()
     {
+        int pos = 0; // FOR TESTING ONLY
+
         int doorsLeft = allDoors.Count;
-        int randNum = Random.Range(0, allDoors.Count); // FOR TESTING ONLY
-        Door root = allDoors[randNum];
-        Debug.Log(randNum); // FOR TESTING ONLY
-        Door next;
-        int pos = 0;
-        while(doorsLeft > 0)
+        Door root = allDoors[Random.Range(0, allDoors.Count)], tempRoot = root, next;
+
+        while(doorsLeft > 1)
         {
-            randNum = Random.Range(0, allDoors.Count);
+            tempRoot.visited = true;
             next = allDoors[Random.Range(0, allDoors.Count)];
-            if(!next.visited && next != root) //To ensure no infinite loops
+
+            if(!next.visited && next != tempRoot) //To ensure no infinite loops
             {
-                if (next.nextDoor == null || next.nextDoor != root)
+                if (next.nextDoor == null || next.nextDoor != tempRoot)
                 {
-                    Debug.Log(randNum); // FOR TESTING ONLY
-                    lineRenderer.SetPosition(pos, root.transform.position);
-                    pos++;
-                    root.nextDoor = next;
-                    next.visited = true;
+                    lineRenderer.SetPosition(pos, tempRoot.transform.position); //FOR TESTING ONLY
+                    pos++; //FOR TESTING ONLY
+                    tempRoot.nextDoor = next;
                     doorsLeft--;
-                    root = next;
+                    tempRoot = next;
                 }
             }
         }
+        tempRoot.nextDoor = root; //tempRoot is final door, which is to be connected to the original root
+        tempRoot.visited = true;
     }
 }
