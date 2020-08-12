@@ -43,4 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e91c13ffdc1a5b43ac56deaa74b8e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noDupeRooms: 0
+  roomTypes:
+  - {fileID: 4691489247836635857, guid: 4b8dd36576117d348873e912b7b91f5e, type: 3}
+  - {fileID: 2302074204467690684, guid: 8812b74f6c4160843bfc6d5196505595, type: 3}
+  - {fileID: 4284878999796171888, guid: e00df2c358d638e438d8df0f412bf916, type: 3}
+  - {fileID: 7917477978705691576, guid: 82dab3d59269f8043b50ef5ea7678a93, type: 3}
   allDoors: []
+  lineRenderer: {fileID: 0}
