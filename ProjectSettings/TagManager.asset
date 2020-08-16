@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - BlockingLayer
   - 
   - 
   - 
@@ -40,4 +40,28 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Floor
+    uniqueID: 3131993583
+    locked: 0
+  - name: Floor Splatter
+    uniqueID: 4073023747
+    locked: 0
+  - name: Shadow
+    uniqueID: 2917807395
+    locked: 0
+  - name: Ground FX
+    uniqueID: 494833293
+    locked: 0
+  - name: Units
+    uniqueID: 3393972251
+    locked: 0
+  - name: FX
+    uniqueID: 2218044549
+    locked: 0
+  - name: Ceiling Shadow
+    uniqueID: 747032707
+    locked: 0
+  - name: Ceiling
+    uniqueID: 784816305
     locked: 0
