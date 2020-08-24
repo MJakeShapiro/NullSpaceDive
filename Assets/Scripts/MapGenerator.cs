@@ -30,7 +30,9 @@ public class MapGenerator : MonoBehaviour
         RandomlyAssignDoors();
     }
 
-
+    /// <summary>
+    /// Places random rooms form available Prefabs within a range or if noDupeRooms then rooms will not be random
+    /// </summary>
     public void PlaceRooms()
     {
         List<GameObject> roomsPlaced = new List<GameObject>();
@@ -90,6 +92,7 @@ public class MapGenerator : MonoBehaviour
     public void RandomlyAssignDoors()
     {
         int pos = 0; // FOR TESTING ONLY
+        lineRenderer.SetVertexCount(allDoors.Count);
 
         int doorsLeft = allDoors.Count;
         Door next, root = allDoors[Random.Range(0, allDoors.Count)], tempRoot = root;
@@ -104,7 +107,7 @@ public class MapGenerator : MonoBehaviour
                 if (next.nextDoor == null || next.nextDoor != tempRoot)
                 {
                     lineRenderer.SetPosition(pos, tempRoot.transform.position); //FOR TESTING ONLY
-                    Debug.Log("Position Set"); //FOR TESTING ONLY
+                    Debug.Log(tempRoot.transform.position);
                     pos++; //FOR TESTING ONLY
                     tempRoot.nextDoor = next;
                     doorsLeft--;
