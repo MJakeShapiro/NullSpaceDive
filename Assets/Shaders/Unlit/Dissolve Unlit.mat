@@ -29,13 +29,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - BorderWidth: 0.1
-    - _FadeAmmount: 0.96
+    - _FadeAmmount: 1.5
     - _Scale: 5
-    - _TrailWidth: 0.5
-    - _UseDualLines: 0
+    - _TrailWidth: 0.3
+    - _UseDualLines: 1
     - _UseGradient: 0
     m_Colors:
-    - _RingColor: {r: 1.216786, g: 0, b: 0, a: 1}
-    - _RingColor2: {r: 1.216786, g: 0.6434313, b: 0, a: 1}
+    - _RingColor: {r: 1.4980392, g: 0, b: 0, a: 1}
+    - _RingColor2: {r: 1.4980392, g: 0.89411765, b: 0, a: 1}
     - _TrailColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

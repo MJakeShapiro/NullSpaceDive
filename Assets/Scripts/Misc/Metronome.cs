@@ -28,7 +28,6 @@ public class Metronome : MonoBehaviour
     public delegate void offBeatLast();
     public static event offBeatLast OffBeatLast;
 
-
     public bool active;
 
     [HorizontalLine]
@@ -140,7 +139,6 @@ public class Metronome : MonoBehaviour
         beats = n;
         return true;
     }
-
 
     public bool SetOffBeats(int n) // Public method for other classes to change the offbeat count
     {
