@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
     private void HandleMoving()
     {
         Vector2 dir = input.actions.FindAction("Move").ReadValue<Vector2>();
-        playerMovement.SetMoveDirection(dir);
+        playerMovement.SetMoveDirection(dir, dir.magnitude);
     }
 
     private void HandleLooking ()

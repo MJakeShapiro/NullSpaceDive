@@ -1,16 +1,19 @@
 ﻿using NaughtyAttributes;
+using System.Net;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[System.Serializable]
 public class EntityMovement : MonoBehaviour
 {
     [Tooltip("Movement speed in m/s")]
     public float moveSpeed;
-    [Tooltip("Movement using Velocity or MovePosition")]
-    public bool useVelocity;
+    [Tooltip("Back-end handling method for movement")]
+    public MovementType type;
 
     [SerializeField][ReadOnly]
     private Vector2 moveDirection;
+    private float speedFac;
 
     private Rigidbody2D rb;
 
@@ -27,14 +30,37 @@ public class EntityMovement : MonoBehaviour
 
     protected virtual void HandleMovement()
     {
-        if (useVelocity)
-            rb.velocity = moveDirection * moveSpeed;
-        else
-            rb.MovePosition(rb.position + (moveDirection * moveSpeed * Time.fixedDeltaTime));
+        switch(type)
+        {
+            case MovementType.MovePosition:
+                rb.MovePosition(rb.position + (moveDirection * moveSpeed * speedFac * Time.fixedDeltaTime));
+                break;
+            case MovementType.Velocity:
+                rb.velocity = moveDirection * moveSpeed * speedFac;
+                break;
+            //case MovementType.AddForce:
+            default:
+                Debug.LogWarning("Uh oh! Movement type "+type.ToString()+" not supported for: " + name);
+                break;
+        }
     }
 
     public virtual void SetMoveDirection(Vector2 newDirection)
     {
         moveDirection = newDirection.normalized;
+        speedFac = 1;
+    }
+
+    public virtual void SetMoveDirection(Vector2 newDirection, float _speedFac)
+    {
+        moveDirection = newDirection.normalized;
+        speedFac = _speedFac;
+    }
+
+    public enum MovementType
+    {
+        MovePosition,
+        Velocity,
+        AddForce
     }
 }
