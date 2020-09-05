@@ -1,11 +1,6 @@
 ﻿using NaughtyAttributes;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Security.Policy;
 using UnityEngine;
-using UnityEngine.Timeline;
-using UnityEngine.UIElements;
 
 public class Gun : Weapon
 {
