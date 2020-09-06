@@ -2,9 +2,10 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[System.Serializable]
 public class EntityMovement : MonoBehaviour
 {
+    protected Entity.EntityReferenceContainer container;
+
     [Tooltip("Movement speed in m/s")]
     public float moveSpeed;
     [Tooltip("Back-end handling method for movement")]
@@ -27,8 +28,20 @@ public class EntityMovement : MonoBehaviour
         HandleMovement();
     }
 
+    /// <summary>
+    /// Sets the Entity references to other Entity componenets
+    /// </summary>
+    /// <param name="_container">Reference Container Class</param>
+    public void SetEntityReference(Entity.EntityReferenceContainer _container)
+    {
+        container = _container;
+    }
+
     protected virtual void HandleMovement()
     {
+        if (moveDirection == Vector2.zero)
+            return;
+
         switch(type)
         {
             case MovementType.MovePosition:
@@ -54,6 +67,11 @@ public class EntityMovement : MonoBehaviour
     {
         moveDirection = newDirection.normalized;
         speedFac = _speedFac;
+    }
+
+    public virtual void StopMoving ()
+    {
+        moveDirection = Vector2.zero;
     }
 
     public enum MovementType

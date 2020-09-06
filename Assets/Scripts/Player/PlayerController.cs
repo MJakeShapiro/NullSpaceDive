@@ -4,7 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+[RequireComponent(typeof(PlayerInput))]
+public class PlayerController : EntityController
 {
     public static List<PlayerController> players = new List<PlayerController>();
 
@@ -13,13 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private List<Rumble> rumbles = new List<Rumble>();
 
-
     [HorizontalLine]
-    public EntityMovement playerMovement;
-
-
-    [HorizontalLine]
-    public EntityAiming playerAiming;
+    [Header("Aiming")]
     [Tooltip("Transform of the players crosshair")]
     public Transform crosshair;
     public bool useLookΔ = false;
@@ -37,43 +33,39 @@ public class PlayerController : MonoBehaviour
 
     private List<Vector2> smoothingList = new List<Vector2>();
 
-
     [HorizontalLine]
     //public EntityEquipment entityEquipment;
     public Weapon activeWeapon;
 
 
-
-    private void OnEnable()
+    protected void OnEnable()
     {
         players.Add(this);
     }
 
-    private void OnDisable()
+    protected void OnDisable()
     {
         players.Remove(this);
     }
 
-    private void Start()
+    protected void Start()
     {
         activeWeapon.SetPlayer(this);
     }
 
-    private void Update()
+    protected override void Update()
     {
-        HandleMoving();
-        HandleLooking();
-        HandleEquipment();
+        base.Update();
         HandleRumble();
     }
 
-    private void HandleMoving()
+    protected override void HandleMovement()
     {
         Vector2 dir = input.actions.FindAction("Move").ReadValue<Vector2>();
-        playerMovement.SetMoveDirection(dir, dir.magnitude);
+        container.movement.SetMoveDirection(dir, dir.magnitude);
     }
 
-    private void HandleLooking ()
+    protected override void HandleAiming ()
     {
         if (useLookΔ)
         {
@@ -104,13 +96,12 @@ public class PlayerController : MonoBehaviour
             lookDirection = (crosshairPosition - (Vector2)transform.position).normalized;
         }
 
-        playerAiming.LookInDirection(lookDirection);
+        container.aiming.LookInDirection(lookDirection);
         UpdateCrosshair();
     }
 
-    private void HandleEquipment()
+    protected override void HandleEquipment()
     {
-        //bool fireTrigger = input.actions.FindAction("Fire").ReadValue<bool>();
         activeWeapon?.Action1(input.actions.FindAction("Fire").ReadValue<float>()>=0.5f);
     }
 
@@ -126,9 +117,9 @@ public class PlayerController : MonoBehaviour
         }
 
         if (rumbles.Count == 0)
-            Gamepad.current.SetMotorSpeeds(0, 0);
+            Gamepad.current?.SetMotorSpeeds(0, 0);
         else
-            Gamepad.current.SetMotorSpeeds(rumbles[0].speed.x, rumbles[0].speed.y);
+            Gamepad.current?.SetMotorSpeeds(rumbles[0].speed.x, rumbles[0].speed.y);
     }
 
     public void StartRumble (Vector2 _speed, float _priority, int _duration)
@@ -139,12 +130,12 @@ public class PlayerController : MonoBehaviour
     public void StartRumble(Rumble _rumble)
     {
         if (rumbles.Count == 0)
-            Gamepad.current.SetMotorSpeeds(_rumble.speed.x, _rumble.speed.y);
+            Gamepad.current?.SetMotorSpeeds(_rumble.speed.x, _rumble.speed.y);
 
 
         _rumble.Start(Time.time);
         rumbles.Add(_rumble);
-        rumbles = rumbles.OrderBy(r => r.priority).ToList();
+        rumbles = rumbles.OrderBy(r => r.priority).ToList(); // Linq magic from the internet
     }
 
     public void CancelRumble (Rumble _rumble)
@@ -157,6 +148,7 @@ public class PlayerController : MonoBehaviour
         rumbles.Clear();
         Gamepad.current.SetMotorSpeeds(0, 0);
     }
+
 
     private void UpdateCrosshair()
     {
