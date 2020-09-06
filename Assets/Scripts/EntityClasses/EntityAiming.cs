@@ -1,9 +1,11 @@
 ﻿using NaughtyAttributes;
-using UnityEditor.XR;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class EntityAiming : MonoBehaviour
 {
+    protected Entity.EntityReferenceContainer container;
+
     [Tooltip("Transform to rotate")]
     public Transform rotator; // Temp, should probably be reworked later
     [Tooltip("Transform that is used to instantiate bullets")]
@@ -45,15 +47,33 @@ public class EntityAiming : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the Entity references to other Entity componenets
+    /// </summary>
+    /// <param name="_container">Reference Container Class</param>
+    public void SetEntityReference(Entity.EntityReferenceContainer _container)
+    {
+        container = _container;
+    }
 
+    /// <summary>
+    /// Rotates towards the supplied Vector2
+    /// </summary>
+    /// <param name="_target">Target to look at</param>
     public virtual void LookAt(Vector2 _target)
     {
         LookInDirection(_target - (Vector2)rotator.position);
     }
 
-
+    /// <summary>
+    /// Rotates towards the supplied direction
+    /// <para>positive Y represents 0, and increments clockwise</para>
+    /// </summary>
+    /// <param name="_direction">Durrection to look in</param>
     public virtual void LookInDirection(Vector2 _direction)
     {
+        DisableAutolook();
+
         float angle = Vector2.SignedAngle(Vector2.up, _direction);
         if (flipSprite)
         {
@@ -67,6 +87,10 @@ public class EntityAiming : MonoBehaviour
         rotator.rotation = OffsetDirection(rot);
     }
 
+    /// <summary>
+    /// Inverts the scale along the y axis
+    /// </summary>
+    /// <param name="flip">True to flip, false for default orientation</param>
     public virtual void FlipSprite(bool flip)
     {
         rotator.transform.localScale = new Vector3(rotator.transform.localScale.x, (flip ? -1 : +1) * Mathf.Abs(rotator.transform.localScale.y), rotator.transform.localScale.z);
@@ -76,6 +100,10 @@ public class EntityAiming : MonoBehaviour
         //Call other events here if needed
     }
 
+    /// <summary>
+    /// Rotates the provided Quaternion based on the sprites default orientation
+    /// </summary>
+    /// <param name="_rotation">Supplied rotation to be offset</param>
     protected virtual Quaternion OffsetDirection(Quaternion _rotation)
     {
         Quaternion offset;
@@ -99,6 +127,9 @@ public class EntityAiming : MonoBehaviour
         return _rotation * offset;
     }
 
+    /// <summary>
+    /// Sets a Transform for the script to rotate torwards
+    /// </summary>
     public virtual void SetLookTarget (Transform _target)
     {
         lookTarget = _target;
@@ -107,6 +138,9 @@ public class EntityAiming : MonoBehaviour
         useLookLocation = false;
     }
 
+    /// <summary>
+    /// Sets a Vector3 location for the script to rotate torwards
+    /// </summary>
     public virtual void SetLookLocation (Vector3 _location)
     {
         lookLocation = _location;
@@ -115,6 +149,9 @@ public class EntityAiming : MonoBehaviour
         useLookTarget = false;
     }
 
+    /// <summary>
+    /// Prevents the script from automatically looking at a target
+    /// </summary>
     public virtual void DisableAutolook ()
     {
         useLookTarget = false;

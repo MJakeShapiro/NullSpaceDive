@@ -132,34 +132,31 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D (Collider2D col)
     {
-        //Debug.Log("OnTriggerEnter2D()");
-        /*
-        Entity other = col.GetComponent<Entity>();
+        Entity other = col.GetComponentInParent<Entity>();
         if (other==null)
         {
             OnHitWall();
         }
-        else if (FactionManager.CanAttack(this.container.stats.faction, other.faction))
+        else if (Entity.CanAttack(this.container.stats.faction, other.faction))
         {
-            OnHitTarget();
+            OnHitTarget(other);
         }
-        */
-        OnHitTarget();
     }
 
-    public void OnHitTarget()
+    public void OnHitTarget(Entity other)
     {
-        //Debug.Log("OnHitTarget()");
         foreach (ProjectileMod mod in container.mods.onHitTarget)
         {
             mod.OnHitTarget();
         }
+
+        other.Damage(container.stats.damage, container.stats.element, out float damageDealt);
+
         OnRemove();
     }
 
     public void OnHitWall()
     {
-        //Debug.Log("OnHitWall()");
         foreach (ProjectileMod mod in container.mods.onHitWall)
         {
             mod.OnHitWall();
@@ -169,7 +166,6 @@ public class Projectile : MonoBehaviour
 
     public void OnRangeMet ()
     {
-        //Debug.Log("OnRangeMet()");
         foreach (ProjectileMod mod in container.mods.onRangeMet)
         {
             mod.OnRangeMet();
@@ -179,7 +175,7 @@ public class Projectile : MonoBehaviour
 
     public void OnReflected ()
     {
-        //Debug.Log("OnReflected()");
+        Debug.Log("OnReflected()");
         foreach (ProjectileMod mod in container.mods.onReflected)
         {
             mod.OnReflected();
@@ -189,7 +185,6 @@ public class Projectile : MonoBehaviour
 
     public void OnRemove ()
     {
-        //Debug.Log("OnRemove()");
         foreach (ProjectileMod mod in container.mods.onRemove)
         {
             mod.OnRemove();
@@ -289,33 +284,18 @@ public class ProjectileMod
 
     public ProjectileMod ()
     {
-        //name = "default";
+        name = "default";
     }
 
-    public virtual void OnHitTarget ()
-    {
+    public virtual void OnHitTarget () { }
 
-    }
+    public virtual void OnHitWall () { }
 
-    public virtual void OnHitWall ()
-    {
+    public virtual void OnReflected () { }
 
-    }
+    public virtual void OnRangeMet () { }
 
-    public virtual void OnReflected ()
-    {
-
-    }
-
-    public virtual void OnRangeMet ()
-    {
-
-    }
-
-    public virtual void OnRemove ()
-    {
-
-    }
+    public virtual void OnRemove () { }
 }
 
 public class Mod_Dummy : ProjectileMod
@@ -323,28 +303,13 @@ public class Mod_Dummy : ProjectileMod
     new public const int priority = 0;
     new public string name = "Dummy";
 
-    public override void OnHitTarget()
-    {
+    public override void OnHitTarget(){}
 
-    }
+    public override void OnHitWall(){}
 
-    public override void OnHitWall()
-    {
+    public override void OnReflected(){}
 
-    }
+    public override void OnRangeMet(){}
 
-    public override void OnReflected()
-    {
-
-    }
-
-    public override void OnRangeMet()
-    {
-
-    }
-
-    public override void OnRemove()
-    {
-
-    }
+    public override void OnRemove(){}
 }

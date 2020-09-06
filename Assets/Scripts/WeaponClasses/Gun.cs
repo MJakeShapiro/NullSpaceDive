@@ -348,28 +348,6 @@ public class GunStats
     }
 }
 
-public enum Faction
-{
-    None, // Represents obstacles
-    Player, // Damages enemy/environment, triggers player effects
-    Ally, // Damages enemy/environment
-    Enemy, // Damages player/environment
-    ReflectedEnemy, // Damages player/enemy/environment, triggers player effects
-    Hazard, // Damages player/enemy/environment
-    ReflectedHazard // Damages player/enemy/environment, triggers player effects
-}
-
-public class FactionManager // TODO: Remake under Entity class
-{
-    public static bool CanAttack(Faction fac1, Faction fac2)
-    {
-        if ((fac1==Faction.Player && fac2==Faction.Ally) || (fac1==Faction.Ally && fac2==Faction.Player))
-            return false;
-        else
-            return (fac1!=fac2);
-    }
-}
-
 public enum AmmoType
 {
     Physical, // Arrows, misc
@@ -402,14 +380,4 @@ public enum ReloadType
     Shells,
     Overheat,
     Energy
-}
-
-public enum Element
-{
-    None,
-    Acid,
-    Air,
-    Fire,
-    Lightning,
-    Water,
 }
