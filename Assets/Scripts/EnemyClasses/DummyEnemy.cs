@@ -14,15 +14,22 @@ public class DummyEnemy : EntityController
     [SerializeField] [ReadOnly]
     private GameObject target = default;
 
+    private void Awake()
+    {
+    }
+
     void Start()
     {
+        if (weapon)
+            weapon.Initialize(container.entity);
+
         if (PlayerController.players?[0] != null)
             target = PlayerController.players[0].gameObject;
     }
 
     protected override void HandleMovement()
     {
-        if (chasePlayer && DistanceFromTarget() > range - 0.5f)
+        if (chasePlayer && target!=null && DistanceFromTarget() > range - 0.5f)
             container.movement.SetMoveDirection(target.transform.position - transform.position);
         else if (moveInCircles)
             container.movement.SetMoveDirection(new Vector2(Mathf.Sin(Time.time * 1.5f), Mathf.Cos(Time.time * 1.5f)));
@@ -33,7 +40,7 @@ public class DummyEnemy : EntityController
 
     protected override void HandleAiming()
     {
-        if (DistanceFromTarget() < range + 0.5f)
+        if (target != null && DistanceFromTarget() < range + 0.5f)
             container.aiming.SetLookTarget(target.transform);
         else
             container.aiming.LookInDirection(new Vector2(-1,-1));
@@ -48,7 +55,6 @@ public class DummyEnemy : EntityController
             RaycastHit2D hit = Physics2D.Raycast(transform.position, target.transform.position - transform.position);
             if (hit.collider != null)
             {
-                Debug.Log(hit.collider.name);
                 if (hit.collider.GetComponentInParent<Entity>()?.faction == Faction.Player) // Can see player
                 {
                     weapon.Action1(true);

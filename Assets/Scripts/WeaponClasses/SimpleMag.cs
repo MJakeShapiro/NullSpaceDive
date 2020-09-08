@@ -15,9 +15,10 @@ public class SimpleMag : Magazine
         
     }
 
-    public override void Initialize ()
+    public override void Initialize (Faction fac)
     {
         SetStats();
+        bullet.stats.faction = fac;
         curAmmo = maxAmmo;
     }
 

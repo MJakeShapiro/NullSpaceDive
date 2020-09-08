@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Gun : Weapon
 {
-    public Faction faction;
     public FiringType firingType = FiringType.Automatic;
     public AmmoType ammoType = AmmoType.Bullet;
     public ReloadType reloadType = ReloadType.Clip;
@@ -39,9 +38,10 @@ public class Gun : Weapon
             stats.burstCount = 0;
     }
 
-    protected void Start ()
+    public override void Initialize(Entity owner)
     {
-        mag.Initialize();
+        base.Initialize(owner);
+        mag.Initialize(owner.faction);
     }
 
     protected void Update ()

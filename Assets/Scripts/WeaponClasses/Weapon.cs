@@ -4,10 +4,17 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour
 {
     protected PlayerController player;
+    public Faction faction;
 
     public void SetPlayer (PlayerController _player)
     {
         player = _player;
+    }
+
+    public virtual void Initialize(Entity owner)
+    {
+        faction = owner.faction;
+        player = owner.container.controller as PlayerController;
     }
 
     public void StartRumble (Rumble _rumble)

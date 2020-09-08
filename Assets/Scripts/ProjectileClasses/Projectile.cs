@@ -1,4 +1,5 @@
-﻿using NaughtyAttributes;
+﻿using JetBrains.Annotations;
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,16 +16,16 @@ public class Projectile : MonoBehaviour
     //private LayerMask collisionMask;
     private new SpriteRenderer renderer;
     private Rigidbody2D rb;
-    private CircleCollider2D circleCollider;
-    private BoxCollider2D boxCollider;
+    //private CircleCollider2D circleCollider;
+    //private BoxCollider2D boxCollider;
 
     public void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         renderer = GetComponent<SpriteRenderer>();
-        circleCollider = GetComponent<CircleCollider2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        //circleCollider = GetComponent<CircleCollider2D>();
+        //boxCollider = GetComponent<BoxCollider2D>();
     }
 
     public void Initialize (ProjectileStats _stats, ProjectileGraphics _graphics, ProjectileModifiers _mods, Weapon _source)
@@ -198,7 +199,6 @@ public class ProjectileContainer
 {
     public ProjectileStats stats;
     public ProjectileGraphics graphics;
-    [HideInInspector]
     public ProjectileModifiers mods;
 
     public ProjectileContainer ()
@@ -265,6 +265,14 @@ public class ProjectileGraphics
         size = _size;
     }
 }
+
+/*
+[System.Serializable]
+public class ProjectileModifiers
+{
+    public List<ProjectileMod> mods = new List<ProjectileMod>();
+}
+*/
 
 [System.Serializable]
 public class ProjectileModifiers

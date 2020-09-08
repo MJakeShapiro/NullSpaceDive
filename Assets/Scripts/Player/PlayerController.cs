@@ -50,7 +50,7 @@ public class PlayerController : EntityController
 
     protected void Start()
     {
-        activeWeapon.SetPlayer(this);
+        activeWeapon.Initialize(container.entity);
     }
 
     protected override void Update()
@@ -148,7 +148,6 @@ public class PlayerController : EntityController
         rumbles.Clear();
         Gamepad.current.SetMotorSpeeds(0, 0);
     }
-
 
     private void UpdateCrosshair()
     {
