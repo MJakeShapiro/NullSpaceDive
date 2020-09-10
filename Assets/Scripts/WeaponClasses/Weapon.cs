@@ -1,15 +1,16 @@
-﻿using NaughtyAttributes;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour
 {
     protected PlayerController player;
+    [Tooltip("Enum source under EntityEquipment.cs")]
+    public WeaponType weaponType;
     public Faction faction;
 
-    public void SetPlayer (PlayerController _player)
+    /*public void SetPlayer (PlayerController _player)
     {
         player = _player;
-    }
+    }*/
 
     public virtual void Initialize(Entity owner)
     {
@@ -20,6 +21,14 @@ public abstract class Weapon : MonoBehaviour
     public void StartRumble (Rumble _rumble)
     {
         player.StartRumble(_rumble);
+    }
+
+    /// <summary>
+    /// Runs tests on the weapon to determine if it's set up properly
+    /// </summary>
+    public virtual bool TestValidity()
+    {
+        return true;
     }
 
     /// <summary> Activates the weapon </summary>

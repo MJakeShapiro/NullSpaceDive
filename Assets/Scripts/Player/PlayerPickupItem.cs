@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Resources;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Most of this is temporary for now, but it gets the job done!
@@ -9,56 +6,35 @@ using UnityEngine;
 /// </summary>
 public class PlayerPickupItem : MonoBehaviour
 {
-    public GameObject[] weapon = new GameObject[1];
+    public WeaponType[] weapon = new WeaponType[1];
 
-    bool deactivateOnGet = false;
-    bool destroyOnGet = false;
+    public bool deactivateOnGet = false;
+    public bool destroyOnGet = false;
+
+    private void Awake()
+    {
+        foreach (WeaponType wt in weapon)
+            if (wt == WeaponType.Null)
+                Debug.LogWarning($"Uh oh! WeaponType cant be null for '{name}' PickupItem!");
+    }
 
     void OnTriggerEnter2D(Collider2D col)
     {
         Entity other = col.GetComponentInParent<Entity>();
         if (other != null && other.container.controller is PlayerController)
         {
-            OnPlayerContact(other.container.controller as PlayerController, other);
+            OnPlayerContact(other.container.equipment);
         }
     }
 
-    void OnPlayerContact (PlayerController pc, Entity entity)
+    void OnPlayerContact (EntityEquipment equipment)
     {
-        RemovePlayersCurrentItem(pc);
-
-        GameObject wep = weapon[Random.Range(0, weapon.Length-1)];
-        GiveItemToPlayer(pc, entity, wep);
-
-        if (destroyOnGet)
+        if (equipment.PickupWeapon(weapon[Random.Range(0, weapon.Length)]))
         {
-            Destroy(gameObject);
-        }
-        else if (deactivateOnGet)
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
-    void RemovePlayersCurrentItem (PlayerController pc)
-    {
-        Destroy(pc.activeWeapon.gameObject);
-    }
-
-    void GiveItemToPlayer (PlayerController pc, Entity entity, GameObject wepObj)
-    {
-        GameObject gun = Instantiate(wepObj, entity.container.aiming.rotator);
-        Weapon newWep = gun.GetComponent<Weapon>();
-        if (newWep != null)
-        {
-            newWep.transform.localPosition = Vector3.zero;
-            newWep.Initialize(entity);
-            pc.activeWeapon = newWep;
-        }
-        else
-        {
-            Debug.LogError("Couldn't find weapon for " + name + ", uh oh!");
-            Destroy(gun);
+            if (destroyOnGet)
+                Destroy(gameObject);
+            else if (deactivateOnGet)
+                gameObject.SetActive(false);
         }
     }
 }

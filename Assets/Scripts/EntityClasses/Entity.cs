@@ -24,6 +24,7 @@ public class Entity : MonoBehaviour
 
     protected virtual void Start()
     {
+
     }
 
     protected virtual void Update()
@@ -40,6 +41,8 @@ public class Entity : MonoBehaviour
         container.entity = this;
         if (container.controller == null)
             container.controller = GetComponentInChildren<EntityController>();
+        if (container.equipment == null)
+            container.equipment = GetComponentInChildren<EntityEquipment>();
         if (container.movement == null)
             container.movement = GetComponentInChildren<EntityMovement>();
         if (container.aiming == null)
@@ -261,14 +264,17 @@ public class Entity : MonoBehaviour
     [System.Serializable]
     public class EntityReferenceContainer
     {
+        [ReadOnly]
         public Entity entity;
         public EntityController controller;
+        public EntityEquipment equipment;
         public EntityMovement movement;
         public EntityAiming aiming;
 
         public void SetEntityReferences ()
         {
             controller?.SetEntityReference(this);
+            equipment?.SetEntityReference(this);
             movement?.SetEntityReference(this);
             aiming?.SetEntityReference(this);
         }

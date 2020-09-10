@@ -1,11 +1,8 @@
 ﻿using NaughtyAttributes;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class DummyEnemy : EntityController
 {
-    public Weapon weapon;
     public bool holdTrigger;
     public bool chasePlayer;
     public bool moveInCircles;
@@ -16,13 +13,11 @@ public class DummyEnemy : EntityController
 
     private void Awake()
     {
+
     }
 
     void Start()
     {
-        if (weapon)
-            weapon.Initialize(container.entity);
-
         if (PlayerController.players?[0] != null)
             target = PlayerController.players[0].gameObject;
     }
@@ -43,24 +38,26 @@ public class DummyEnemy : EntityController
         if (target != null && DistanceFromTarget() < range + 0.5f)
             container.aiming.SetLookTarget(target.transform);
         else
-            container.aiming.LookInDirection(new Vector2(-1,-1));
+            container.aiming.LookInDirection(new Vector2(-1, -1));
     }
 
     protected override void HandleEquipment()
     {
+        if (!container.equipment.IsHoldingWeapon())
+            return;
+
         if (holdTrigger)
-            weapon.Action1(true);
+            container.equipment.TriggerAction1(true);
         else if (target && DistanceFromTarget() < range)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, target.transform.position - transform.position);
-            if (hit.collider != null)
-            {
-                if (hit.collider.GetComponentInParent<Entity>()?.faction == Faction.Player) // Can see player
-                {
-                    weapon.Action1(true);
-                }
-            }
+            if (hit.collider != null && hit.collider.GetComponentInParent<Entity>()?.faction == Faction.Player)
+                container.equipment.TriggerAction1(true);
+            else
+                container.equipment.TriggerAction1(false);
         }
+        else
+            container.equipment.TriggerAction1(false);
     }
 
     private float DistanceFromTarget ()

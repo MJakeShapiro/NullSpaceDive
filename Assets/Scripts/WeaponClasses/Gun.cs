@@ -13,6 +13,7 @@ public class Gun : Weapon
 
     public GunState state = GunState.Idle;
 
+    [Tooltip("Transform to fire bullet from")]
     public Transform barrelTip;
 
     public bool action2IsReload = true;
@@ -34,8 +35,53 @@ public class Gun : Weapon
 
     protected void Awake ()
     {
+#if UNITY_EDITOR
+        
+        //if (weaponType == WeaponType.Null)
+        //    Debug.LogWarning("Null WeaponType set for: " + gameObject.name);
+
+        // Move FPS limit to game controller eventually
+        //QualitySettings.vSyncCount = 0;
+        //Application.targetFrameRate = 10;
+#endif
+    }
+
+    public override bool TestValidity()
+    {
+        int infractions = 0;
+
+        if (weaponType == WeaponType.Null)
+        {
+            Debug.LogWarning("Null WeaponType set for: " + gameObject.name+"\nPlease set proper value in prefab");
+            infractions++;
+        }
+
         if (stats.burstCount == 1)
+        {
             stats.burstCount = 0;
+            Debug.LogWarning("BurstCount improperly set for: "+weaponType.ToString()+"\nPlase use 0 instead of 1");
+            infractions++;
+        }
+
+        if (stats.burstCount > 1 && stats.burstDelay < stats.burstCount * stats.fireDelay)
+        {
+            stats.burstDelay = stats.burstCount * stats.fireDelay;
+            Debug.LogWarning("Burst delay too short on "+weaponType.ToString()+"\nSetting to: "+stats.burstDelay);
+            infractions++;
+        }
+
+        if (mag==null)
+        {
+            Debug.LogWarning("Mag reference not set on " + weaponType.ToString() + "\nPlease set proper value in prefab");
+            infractions++;
+        }
+
+        if (barrelTip==null)
+        {
+            Debug.LogWarning("BarrelTip transform not set on " + weaponType.ToString() + "\nPlease set proper value in prefab");
+            infractions++;
+        }
+        return (infractions <= 0 ? true : false);
     }
 
     public override void Initialize(Entity owner)
@@ -45,6 +91,15 @@ public class Gun : Weapon
     }
 
     protected void Update ()
+    {
+        GunUpdate(true);
+    }
+
+    /// <summary>
+    /// Handles gun states
+    /// </summary>
+    /// <param name="original">True if called from Update()</param>
+    protected void GunUpdate (bool original)
     {
         switch (state)
         {
@@ -60,7 +115,7 @@ public class Gun : Weapon
             case GunState.Recovering:
                 if (burstIndex == -1) // Fired once
                 {
-                    if (Time.time >= lastBurstStarted + stats.burstDelay)
+                    if (Time.time >= lastBurstStarted + stats.burstDelay && action1Released)
                     {
                         state = GunState.Idle;
                     }
@@ -70,19 +125,21 @@ public class Gun : Weapon
                     if (Time.time >= lastFired + stats.fireDelay && Time.time >= lastBurstStarted + stats.burstDelay)
                     {
                         state = GunState.Idle;
-                        burstIndex=-1;
+                        burstIndex = -1;
+                        //Debug.LogError("Burst Over, " + Time.frameCount);
                     }
                 }
                 else // Mid-burst
                 {
-                    if (Time.time >= lastFired+stats.fireDelay)
+                    //Debug.Log("Mid-Burst, " + Time.frameCount+"\n" + Time.time + ", " + lastFired + ", " + stats.fireDelay);
+                    if (Time.time >= lastFired + stats.fireDelay)
                     {
                         if (CanShoot())
                         {
                             float lastShot = lastFired;
-                            Shoot();
-                            lastFired = lastShot + stats.fireDelay;
+                            lastFired += stats.fireDelay;
                             burstIndex--;
+                            Shoot(Time.time - (lastShot + stats.fireDelay));
                         }
                         else
                             CancelBurst();
@@ -100,6 +157,7 @@ public class Gun : Weapon
     public override void Equip ()
     {
         timeEquipped = Time.time;
+        state = GunState.Switching;
         gameObject.SetActive(true);
     }
 
@@ -116,15 +174,15 @@ public class Gun : Weapon
         {
             if (CanBurst())
             {
+                StartBurst(!action1Released);
                 action1Released = false;
-                StartBurst();
             }
             else if (reloadOnEmptyFire && mag.GetAmmo().x == 0)
             {
                 if (CanReload())
                 {
-                    action1Released = false;
                     StartReload();
+                    action1Released = true;
                 }
             }
         }
@@ -142,7 +200,10 @@ public class Gun : Weapon
             if (action2IsReload)
             {
                 if (CanReload())
+                {
                     StartReload();
+                    action1Released = true;
+                }
             }
         }
         else
@@ -156,6 +217,9 @@ public class Gun : Weapon
         CancelBurst();
         CancelReload();
         CancelEquip();
+
+        action1Released = true;
+        action2Released = true;
     }
 
     public override void RemoveProjectile(GameObject proj)
@@ -163,7 +227,7 @@ public class Gun : Weapon
         activeBullets.Remove(proj);
     }
 
-    protected virtual void StartBurst ()
+    protected virtual void StartBurst (bool held)
     {
         if (stats.burstCount == 0 || stats.burstCount == 1) // Fire Normally
         {
@@ -178,10 +242,19 @@ public class Gun : Weapon
             burstIndex = 999;
         }
 
-        lastBurstStarted = Time.time;
-        Shoot();
+        if (held && stats.burstCount<2)
+        {
+            Shoot(Time.time - (lastBurstStarted+stats.burstDelay));
+            lastBurstStarted += stats.burstDelay;
+        }
+        else
+        {
+            lastBurstStarted = Time.time;
+            lastFired = Time.time;
+            Shoot(0);
+        }
     }
-
+    
     protected virtual bool CancelBurst ()
     {
         if (burstIndex == 0) // Burst completed normally
@@ -199,27 +272,42 @@ public class Gun : Weapon
             return false;
     }
 
-    protected virtual void Shoot ()
+    protected virtual void Shoot (float offset)
     {
-        lastFired = Time.time;
         state = GunState.Recovering;
 
         int bulletsPerShot = mag.GetBulletsPerShot();
         for (int i=0; i<bulletsPerShot; i++)
         {
             ProjectileContainer container = mag.GetNextBullet(i==bulletsPerShot-1);
-            float angleOffset = (Random.value-0.5f)*stats.spread;
+            float angleOffset = GetAccuracyModifier(stats.accuracy)*stats.spread*(Random.Range(0,2)*2-1);
             Quaternion rot = Quaternion.Euler(0,0, barrelTip.rotation.eulerAngles.z + angleOffset);
-            GameObject bullet = ObjectPooler.ForceSetObject(barrelTip.position, rot);
+            GameObject bullet;
+            if (offset > 0)
+            {
+                float dist = container.stats.speed * offset;
+                bullet = ObjectPooler.ForceSetObject(barrelTip.position + rot*Vector3.right*dist, rot);
+            }
+            else
+                bullet = ObjectPooler.ForceSetObject(barrelTip.position, rot);
+
             activeBullets.Add(bullet);
             bullet.GetComponent<Projectile>().Initialize(container, this);
         }
 
-        // Play Shoot FX (Sounds, anim, flash, rumble)
-        if (player != null)
+        if (stats.burstCount>1 && offset>stats.fireDelay) // Shoot multiple times per frame
+        {
+            Debug.LogWarning("Firing multiple per frame\n"+Mathf.Floor(offset/stats.fireDelay));
+            GunUpdate(false);
+        }
+        else if (stats.burstCount<=1 && offset>stats.burstDelay)
+        {
+            Debug.LogWarning("Bursting multiple per frame\n" + Mathf.Floor(offset / stats.burstDelay));
+            GunUpdate(false);
+        }
+        else if (player != null) // Play Shoot FX (Sounds, anim, flash, rumble)
         {
             StartRumble(new Rumble(Rumble.bullet));
-            StartRumble(new Rumble(Rumble.bullet2));
         }
     }
 
@@ -275,7 +363,7 @@ public class Gun : Weapon
     public virtual bool CanBurst ()
     {
         if (mag.CanFire() &&
-            (state == GunState.Idle) &&
+            (state == GunState.Idle || state == GunState.Recovering) &&
             Time.time >= lastFired + stats.fireDelay &&
             Time.time >= lastBurstStarted + stats.burstDelay )
             return true;
@@ -304,6 +392,14 @@ public class Gun : Weapon
         else
             return false;
     }
+
+    /// <param name="acc">Weapons accuracy, between 0 and 1</param>
+    /// <returns>Affective spead, between 0 and 1</returns>
+    protected float GetAccuracyModifier(float acc)
+    {
+        float rand = Random.Range(0f, 1f);
+        return Mathf.Pow(rand, 1f/(1f-acc));
+    }
 }
 
 
@@ -317,18 +413,24 @@ public enum GunState
 [System.Serializable]
 public class GunStats
 {
-    public float burstDelay = 0; // (s)
-    public float fireDelay = 0.4f; // (s)
+    [Tooltip("Time in s between bursts - Keep above .033")]
+    public float burstDelay = 0.4f; // (s)
+    [Tooltip("Used during bursts, time between shots")]
+    public float fireDelay = 0; // (s)
+    [Tooltip("Shots per burst, 0/1 -> no burst")]
     public int burstCount = 1; // (shots)
+    [Tooltip("Maximum allowed bullet deviation in degrees")]
     public float spread = 5; // (degrees)
     public float accuracy = 1; // higher numbers, more centered shots
+    [Tooltip("Time to reload")]
     public float reloadDelay = 1; // (s)
+    [Tooltip("Time to equip")]
     public float equipDelay = 0.5f; // (s)
 
     public GunStats ()
     {
-        burstDelay = 0;
-        fireDelay = 0.4f;
+        burstDelay = 0.4f;
+        fireDelay = 0f;
         burstCount = 1;
         spread = 5;
         accuracy = 1;
@@ -350,6 +452,7 @@ public class GunStats
 
 public enum AmmoType
 {
+    None, // Infinite
     Physical, // Arrows, misc
     Bullet,
     Shell, // Shotguns
