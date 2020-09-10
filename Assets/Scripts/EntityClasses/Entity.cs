@@ -18,14 +18,13 @@ public class Entity : MonoBehaviour
 
     protected virtual void Awake()
     {
+        container.SetEntityReferences();
         entityStats.Restore();
     }
 
     protected virtual void Start()
     {
-        container.SetEntityReferences();
-        //if (activateOnStart)
-        //    state = EntityState.Active;
+
     }
 
     protected virtual void Update()
@@ -39,8 +38,11 @@ public class Entity : MonoBehaviour
         if (container == null)
             container = new EntityReferenceContainer();
 
+        container.entity = this;
         if (container.controller == null)
             container.controller = GetComponentInChildren<EntityController>();
+        if (container.equipment == null)
+            container.equipment = GetComponentInChildren<EntityEquipment>();
         if (container.movement == null)
             container.movement = GetComponentInChildren<EntityMovement>();
         if (container.aiming == null)
@@ -118,6 +120,7 @@ public class Entity : MonoBehaviour
     public bool DamageShields(float damage, Element element, out float damageDealt)
     {
         damageDealt = 0;
+        //damageLeft = damage;
         if (damage <= 0)
             return false;
 
@@ -241,7 +244,6 @@ public class Entity : MonoBehaviour
     protected void DefaultDeathSequence()
     {
         //TEMPORARY
-        Debug.Log("Killing Entity: " + name);
         Destroy(gameObject);
     }
 
@@ -262,13 +264,17 @@ public class Entity : MonoBehaviour
     [System.Serializable]
     public class EntityReferenceContainer
     {
+        [ReadOnly]
+        public Entity entity;
         public EntityController controller;
+        public EntityEquipment equipment;
         public EntityMovement movement;
         public EntityAiming aiming;
 
         public void SetEntityReferences ()
         {
             controller?.SetEntityReference(this);
+            equipment?.SetEntityReference(this);
             movement?.SetEntityReference(this);
             aiming?.SetEntityReference(this);
         }

@@ -15,18 +15,22 @@ public class Projectile : MonoBehaviour
     //private LayerMask collisionMask;
     private new SpriteRenderer renderer;
     private Rigidbody2D rb;
-    private CircleCollider2D circleCollider;
-    private BoxCollider2D boxCollider;
+    //private CircleCollider2D circleCollider;
+    //private BoxCollider2D boxCollider;
 
     public void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         renderer = GetComponent<SpriteRenderer>();
-        circleCollider = GetComponent<CircleCollider2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        //circleCollider = GetComponent<CircleCollider2D>();
+        //boxCollider = GetComponent<BoxCollider2D>();
     }
 
+
+    /// <summary>
+    /// Applies the projectiles graphics/stats/mods, and begins its movement.
+    /// </summary>
     public void Initialize (ProjectileStats _stats, ProjectileGraphics _graphics, ProjectileModifiers _mods, Weapon _source)
     {
         container.stats = _stats;
@@ -88,8 +92,8 @@ public class Projectile : MonoBehaviour
 
     public void StartMovement ()
     {
-        rb.velocity = transform.right * container.stats.speed;
-        StartCoroutine(RangeTrigger(container.stats.range/ container.stats.speed));
+        rb.velocity = transform.right * (container.stats.speed + (container.stats.speedFlux*Random.Range(-1f,1f)));
+        StartCoroutine(RangeTrigger((container.stats.range+Random.Range(-1f,+1f)*1f)/container.stats.speed));
     }
 
     private IEnumerator RangeTrigger (float delay)
@@ -198,7 +202,6 @@ public class ProjectileContainer
 {
     public ProjectileStats stats;
     public ProjectileGraphics graphics;
-    [HideInInspector]
     public ProjectileModifiers mods;
 
     public ProjectileContainer ()
@@ -219,10 +222,17 @@ public class ProjectileContainer
 [System.Serializable]
 public class ProjectileStats
 {
+    [Tooltip("Faction that opwns this projectile")]
     public Faction faction;
+    [Tooltip("Element type of this projectile")]
     public Element element;
+    [Tooltip("Raw damage of each projectile")]
     public float damage;
+    [Tooltip("Average projectile speed in m/s")]
     public float speed;
+    [Tooltip("+/- Speed fluctuation from average in m/s, also effects range")]
+    public float speedFlux;
+    [Tooltip("Max range before destroyed in m, affected by speedFlux")]
     public float range;
 
     public ProjectileStats ()
@@ -231,15 +241,27 @@ public class ProjectileStats
         element = Element.None;
         damage = 0;
         speed = 0;
+        speedFlux = 0;
         range = 100f;
     }
 
-    public ProjectileStats(Faction _faction, Element _element, float _damage, float _speed, float _range)
+    public ProjectileStats(Faction _faction, float _damage, float _speed) // Simplified constructor
+    {
+        faction = _faction;
+        element = Element.None;
+        damage = _damage;
+        speed = _speed;
+        speedFlux = 0;
+        range = 100;
+    }
+
+    public ProjectileStats(Faction _faction, Element _element, float _damage, float _speed, float _speedFlux, float _range)
     {
         faction = _faction;
         element = _element;
         damage = _damage;
         speed = _speed;
+        speedFlux = _speedFlux;
         range = _range;
     }
 }
@@ -248,7 +270,9 @@ public class ProjectileStats
 public class ProjectileGraphics
 {
     public Sprite sprite;
+    [Tooltip("Color filter for projectile")]
     public Color color;
+    [Tooltip("Size of projectile, in meteres")]
     public float size;
 
     public ProjectileGraphics ()
@@ -265,6 +289,14 @@ public class ProjectileGraphics
         size = _size;
     }
 }
+
+/*
+[System.Serializable]
+public class ProjectileModifiers
+{
+    public List<ProjectileMod> mods = new List<ProjectileMod>();
+}
+*/
 
 [System.Serializable]
 public class ProjectileModifiers

@@ -33,10 +33,6 @@ public class PlayerController : EntityController
 
     private List<Vector2> smoothingList = new List<Vector2>();
 
-    [HorizontalLine]
-    //public EntityEquipment entityEquipment;
-    public Weapon activeWeapon;
-
 
     protected void OnEnable()
     {
@@ -48,10 +44,6 @@ public class PlayerController : EntityController
         players.Remove(this);
     }
 
-    protected void Start()
-    {
-        activeWeapon.SetPlayer(this);
-    }
 
     protected override void Update()
     {
@@ -102,7 +94,16 @@ public class PlayerController : EntityController
 
     protected override void HandleEquipment()
     {
-        activeWeapon?.Action1(input.actions.FindAction("Fire").ReadValue<float>()>=0.5f);
+        container.equipment.TriggerAction1(input.actions.FindAction("Fire").ReadValue<float>() >= 0.4f);
+        container.equipment.TriggerAction2(input.actions.FindAction("Reload").ReadValue<float>() >= 0.4f);
+
+        if (input.actions.FindAction("NextWeapon").triggered)
+        {
+            if (input.actions.FindAction("NextWeapon").ReadValue<float>() > 0)
+                container.equipment.EquipNextWeapon();
+            else
+                container.equipment.EquipPreviousWeapon();
+        }
     }
 
     private void HandleRumble ()
@@ -148,7 +149,6 @@ public class PlayerController : EntityController
         rumbles.Clear();
         Gamepad.current.SetMotorSpeeds(0, 0);
     }
-
 
     private void UpdateCrosshair()
     {

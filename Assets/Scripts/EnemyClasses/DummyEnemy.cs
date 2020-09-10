@@ -1,11 +1,8 @@
 ﻿using NaughtyAttributes;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class DummyEnemy : EntityController
 {
-    public Weapon weapon;
     public bool holdTrigger;
     public bool chasePlayer;
     public bool moveInCircles;
@@ -13,6 +10,11 @@ public class DummyEnemy : EntityController
 
     [SerializeField] [ReadOnly]
     private GameObject target = default;
+
+    private void Awake()
+    {
+
+    }
 
     void Start()
     {
@@ -22,7 +24,7 @@ public class DummyEnemy : EntityController
 
     protected override void HandleMovement()
     {
-        if (chasePlayer && DistanceFromTarget() > range - 0.5f)
+        if (chasePlayer && target!=null && DistanceFromTarget() > range - 0.5f)
             container.movement.SetMoveDirection(target.transform.position - transform.position);
         else if (moveInCircles)
             container.movement.SetMoveDirection(new Vector2(Mathf.Sin(Time.time * 1.5f), Mathf.Cos(Time.time * 1.5f)));
@@ -33,28 +35,29 @@ public class DummyEnemy : EntityController
 
     protected override void HandleAiming()
     {
-        if (DistanceFromTarget() < range + 0.5f)
+        if (target != null && DistanceFromTarget() < range + 0.5f)
             container.aiming.SetLookTarget(target.transform);
         else
-            container.aiming.LookInDirection(new Vector2(-1,-1));
+            container.aiming.LookInDirection(new Vector2(-1, -1));
     }
 
     protected override void HandleEquipment()
     {
+        if (!container.equipment.IsHoldingWeapon())
+            return;
+
         if (holdTrigger)
-            weapon.Action1(true);
+            container.equipment.TriggerAction1(true);
         else if (target && DistanceFromTarget() < range)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, target.transform.position - transform.position);
-            if (hit.collider != null)
-            {
-                Debug.Log(hit.collider.name);
-                if (hit.collider.GetComponentInParent<Entity>()?.faction == Faction.Player) // Can see player
-                {
-                    weapon.Action1(true);
-                }
-            }
+            if (hit.collider != null && hit.collider.GetComponentInParent<Entity>()?.faction == Faction.Player)
+                container.equipment.TriggerAction1(true);
+            else
+                container.equipment.TriggerAction1(false);
         }
+        else
+            container.equipment.TriggerAction1(false);
     }
 
     private float DistanceFromTarget ()
