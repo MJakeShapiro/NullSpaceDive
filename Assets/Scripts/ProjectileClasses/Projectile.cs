@@ -154,7 +154,7 @@ public class Projectile : MonoBehaviour
             mod.OnHitTarget();
         }
 
-        other.Damage(container.stats.damage, container.stats.element, out float damageDealt);
+        other.Damage(container.stats.damage, container.stats.element, out float damageDealt, out float damageResisted);
 
         OnRemove();
     }

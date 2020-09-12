@@ -56,32 +56,36 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool Damage(float damage, Element element, out float damageDealt)
+    public bool Damage(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0) // Input sanitizing
-        { Debug.Log($"Damages less than 1 not currently supported!\n{damage}, {element}"); return false; }
+        { Debug.Log($"Damages less than 1 not currently supported!\n{damage}, E: {element}"); return false; }
 
         bool killed = false;
 
         switch (element)
         {
             case Element.Plasma:
-                float damageMult = 2f / (2f + (entityStats.GetShields()>0?1f:0f) + (entityStats.GetArmor()>0?1f:0f)); // return 1 for only hp, .667 for shields or armor, .5 for both
+                float plasmaMult = 2f / (2f + (entityStats.GetShields()>0?1f:0f) + (entityStats.GetArmor()>0?1f:0f)); // return 1 for only hp, .667 for shields or armor, .5 for both
                 if (entityStats.GetShields() > 0)
                 {
-                    killed = DamageShields(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageShields(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 if (entityStats.GetArmor() > 0)
                 {
-                    killed = DamageArmor(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageArmor(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 if (entityStats.GetHealth() > 0)
                 {
-                    killed = DamageHealth(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageHealth(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 break;
 
@@ -89,21 +93,24 @@ public class Entity : MonoBehaviour
             default:
                 if (entityStats.GetShields() > 0)
                 {
-                    killed = DamageShields(damage, element, out float _damageDealt);
+                    killed = DamageShields(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    damage -= _damageDealt;
+                    damageResisted += _damageResisted;
+                    damage -= _damageDealt + _damageResisted;
                 }
                 if (entityStats.GetArmor() > 0 && damage > 0)
                 {
-                    killed = DamageArmor(damage, element, out float _damageDealt);
+                    killed = DamageArmor(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    damage -= _damageDealt;
+                    damageResisted += _damageResisted;
+                    damage -= _damageDealt + _damageResisted;
                 }
                 if (entityStats.GetHealth() > 0 && damage > 0)
                 {
-                    killed = DamageHealth(damage, element, out float _damageDealt);
+                    killed = DamageHealth(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    //damage -= _damageDealt; // Overkill damage, if ever needed
+                    damageResisted += _damageResisted;
+                    //damage -= _damageDealt + _damageResisted; // Overkill damage, if ever needed
                 }
                 break;
         }
@@ -117,9 +124,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageShields(float damage, Element element, out float damageDealt)
+    public bool DamageShields(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         //damageLeft = damage;
         if (damage <= 0)
             return false;
@@ -127,6 +135,9 @@ public class Entity : MonoBehaviour
         int resistanceLevel = Mathf.Clamp(entityStats.resistances.GetResistanceLevel(element) + (element==Element.Electric?1:0), -2, +2);
         float effectiveDamage = damage * (1+resistanceLevel*resistanceFactor);
         damageDealt = Mathf.Clamp(effectiveDamage, 0, entityStats.GetShields());
+
+        damageResisted = Mathf.Min(entityStats.GetShields(), damage-effectiveDamage);
+
         entityStats.SetShields(entityStats.GetShields()-damageDealt);
         if (entityStats.GetShields() == 0)
         {
@@ -151,9 +162,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageArmor(float damage, Element element, out float damageDealt)
+    public bool DamageArmor(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0)
             return false;
 
@@ -184,9 +196,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageHealth(float damage, Element element, out float damageDealt)
+    public bool DamageHealth(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0)
             return false;
 
