@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class DemoCamera : MonoBehaviour
 {
-    [SerializeField] private Transform targetedItem;
-    [SerializeField] private All1ShaderDemoController demoController;
-    [SerializeField] private float speed;
+    [SerializeField] private Transform targetedItem = default;
+    [SerializeField] private All1ShaderDemoController demoController = default;
+    [SerializeField] private float speed = default;
     private Vector3 offset;
     private Vector3 target;
     private bool canUpdate = false;

@@ -2,9 +2,9 @@
 
 public class DemoRandomColorSwap : MonoBehaviour
 {
-    [SerializeField] private Gradient gradient;
+    [SerializeField] private Gradient gradient = default;
     private Material mat;
-    private Texture texture;
+    private Texture texture = default;
 
     void Start()
     {

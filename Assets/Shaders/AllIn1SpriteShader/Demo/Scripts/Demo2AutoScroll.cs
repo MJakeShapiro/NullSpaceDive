@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Demo2AutoScroll : MonoBehaviour
 {
-    private Transform[] children;
+    private Transform[] children = default;
     public float totalTime;
     public GameObject sceneDescription;
 

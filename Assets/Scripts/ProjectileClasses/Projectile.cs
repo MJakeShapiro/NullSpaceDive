@@ -93,13 +93,17 @@ public class Projectile : MonoBehaviour
     public void StartMovement ()
     {
         rb.velocity = transform.right * (container.stats.speed + (container.stats.speedFlux*Random.Range(-1f,1f)));
-        StartCoroutine(RangeTrigger((container.stats.range+Random.Range(-1f,+1f)*1f)/container.stats.speed));
+        RangeTrigger((container.stats.range+Random.Range(-1f,+1f)*1f)/container.stats.speed);
     }
 
-    private IEnumerator RangeTrigger (float delay)
+    private void RangeTrigger (float delay)
     {
-        yield return new WaitForSeconds(delay);
-        OnRangeMet();
+        Invoke("OnRangeMet", delay);
+    }
+
+    public void CancelRangeTrigger()
+    {
+        CancelInvoke("OnRangeMet");
     }
 
     public void SetStats (ProjectileStats _stats)

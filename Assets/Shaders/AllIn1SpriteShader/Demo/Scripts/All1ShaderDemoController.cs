@@ -3,16 +3,15 @@ using UnityEngine.UI;
 
 public class All1ShaderDemoController : MonoBehaviour
 {
-    [SerializeField] private DemoCamera cam;
-    [SerializeField] private DemoCircleExpositor[] expositors;
-    [SerializeField] private Text expositorsTitle;
+    [SerializeField] private DemoCircleExpositor[] expositors = default;
+    [SerializeField] private Text expositorsTitle = default;
     public float expositorDistance;
 
-    private int currExpositor;
+    private int currExpositor = default;
 
-    [SerializeField] private GameObject background;
+    [SerializeField] private GameObject background = default;
     private Material backgroundMat;
-    [SerializeField] private float colorLerpSpeed;
+    [SerializeField] private float colorLerpSpeed = default;
     private Color[] targetColors;
     private Color[] currentColors;
 
