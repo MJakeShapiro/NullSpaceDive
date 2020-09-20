@@ -2,11 +2,14 @@
 
 public abstract class Weapon : MonoBehaviour
 {
+    #region Properties
     protected PlayerController player;
     [Tooltip("Enum source under EntityEquipment.cs")]
     public WeaponType weaponType;
     public Faction faction;
+    #endregion
 
+    #region Initialization
     /*public void SetPlayer (PlayerController _player)
     {
         player = _player;
@@ -18,11 +21,6 @@ public abstract class Weapon : MonoBehaviour
         player = owner.container.controller as PlayerController;
     }
 
-    public void StartRumble (Rumble _rumble)
-    {
-        player.StartRumble(_rumble);
-    }
-
     /// <summary>
     /// Runs tests on the weapon to determine if it's set up properly
     /// </summary>
@@ -30,7 +28,9 @@ public abstract class Weapon : MonoBehaviour
     {
         return true;
     }
+    #endregion
 
+    #region Input
     /// <summary> Activates the weapon </summary>
     public abstract void Equip();
 
@@ -53,4 +53,12 @@ public abstract class Weapon : MonoBehaviour
     /// </summary>
     /// <param name="bullet">The bullet to be removed</param>
     public abstract void RemoveProjectile (GameObject proj);
+    #endregion
+
+    #region General
+    protected void StartRumble(Rumble _rumble)
+    {
+        player.StartRumble(_rumble); // Modify to call Rumble Manager later
+    }
+    #endregion
 }

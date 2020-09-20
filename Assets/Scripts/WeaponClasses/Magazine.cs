@@ -5,9 +5,9 @@ using UnityEngine;
 
 public abstract class Magazine : MonoBehaviour
 {
-    public abstract void Update(); // Misc per-frame functionality
     public abstract void Initialize(Faction faction); // Sets ammo to max, faction to owner, etc
     public abstract void SetStats(); // Applies latests mods, such as ammo capacity
+    public abstract void Update(); // Misc per-frame functionality
     public abstract bool CanFire(); // Returns true if able to fire
     public abstract int GetBulletsPerShot(); // Returns number of bullets fired each shot
     public abstract ProjectileContainer GetNextBullet(bool boo); // Returns the next bullet to be fired. True if consuming a bullet

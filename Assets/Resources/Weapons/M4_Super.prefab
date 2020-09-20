@@ -48,7 +48,7 @@ MonoBehaviour:
   weaponType: 3
   faction: 0
   firingType: 1
-  ammoType: 2
+  ammoType: 3
   reloadType: 2
   stats:
     burstDelay: 0.6
@@ -85,20 +85,17 @@ MonoBehaviour:
       damage: 3
       speed: 13
       speedFlux: 2
-      range: 10
+      range: 11
     graphics:
       sprite: {fileID: 21300000, guid: e63e5c0479e18114094563df8d6400f3, type: 3}
       color: {r: 0.7176471, g: 0.5647059, b: 0.21960786, a: 1}
-      size: 0.175
-    mods:
-      onHitTarget: []
-      onHitWall: []
-      onReflected: []
-      onRangeMet: []
-      onRemove: []
+      scale: {x: 0.175, y: 0.175}
+      size: 1
+    mods: []
   bulletsPerShot: 10
   magSize: 8
   curAmmo: 0
+  debug_modType: 0
 --- !u!1 &8479288892530309115
 GameObject:
   m_ObjectHideFlags: 0

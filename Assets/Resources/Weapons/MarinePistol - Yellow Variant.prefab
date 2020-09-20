@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1197393995, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
       propertyPath: bullet.graphics.size
-      value: 0.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1197393995, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
       propertyPath: bullet.stats.faction
@@ -98,6 +98,14 @@ PrefabInstance:
     - target: {fileID: 1197393995, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
       propertyPath: curAmmo
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1197393995, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
+      propertyPath: bullet.graphics.scale.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1197393995, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
+      propertyPath: bullet.graphics.scale.y
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 77398890919025082, guid: dc5e09c7fa612bb40ae84e4935ac7f43, type: 3}
       propertyPath: m_Color.r

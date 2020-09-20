@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Gun : Weapon
 {
+    #region Properties
     public FiringType firingType = FiringType.Automatic;
     public AmmoType ammoType = AmmoType.Bullet;
     public ReloadType reloadType = ReloadType.Clip;
@@ -32,18 +33,13 @@ public class Gun : Weapon
 
     protected bool action1Released = true;
     protected bool action2Released = true;
+    #endregion Properties
 
+    #region Initialization
     protected void Awake ()
     {
-#if UNITY_EDITOR
-        
         //if (weaponType == WeaponType.Null)
         //    Debug.LogWarning("Null WeaponType set for: " + gameObject.name);
-
-        // Move FPS limit to game controller eventually
-        //QualitySettings.vSyncCount = 0;
-        //Application.targetFrameRate = 10;
-#endif
     }
 
     public override bool TestValidity()
@@ -89,7 +85,9 @@ public class Gun : Weapon
         base.Initialize(owner);
         mag.Initialize(owner.faction);
     }
+    #endregion Initialization
 
+    #region UpdateMethods
     protected void Update ()
     {
         GunUpdate(true);
@@ -153,7 +151,9 @@ public class Gun : Weapon
                 break;
         }
     }
+    #endregion UpdateMethods
 
+    #region Input
     public override void Equip ()
     {
         timeEquipped = Time.time;
@@ -226,7 +226,9 @@ public class Gun : Weapon
     {
         activeBullets.Remove(proj);
     }
+    #endregion Input
 
+    #region Firing
     protected virtual void StartBurst (bool held)
     {
         if (stats.burstCount == 0 || stats.burstCount == 1) // Fire Normally
@@ -310,7 +312,9 @@ public class Gun : Weapon
             StartRumble(new Rumble(Rumble.bullet));
         }
     }
+    #endregion Firing
 
+    #region Reload
     protected virtual void StartReload ()
     {
         reloadStarted = Time.time;
@@ -343,7 +347,9 @@ public class Gun : Weapon
         state = GunState.Idle;
         reloadStarted = -1;
     }
+    #endregion Reload
 
+    #region Equip
     protected virtual bool CancelEquip ()
     {
         if (state == GunState.Switching)
@@ -359,13 +365,13 @@ public class Gun : Weapon
     {
         state = GunState.Idle;
     }
+    #endregion Equip
 
+    #region CheckMethods
     public virtual bool CanBurst ()
     {
-        if (mag.CanFire() &&
-            (state == GunState.Idle || state == GunState.Recovering) &&
-            Time.time >= lastFired + stats.fireDelay &&
-            Time.time >= lastBurstStarted + stats.burstDelay )
+        if (Time.time >= lastBurstStarted + stats.burstDelay &&
+            CanShoot())
             return true;
         else
             return false;
@@ -375,7 +381,8 @@ public class Gun : Weapon
     {
         if (mag.CanFire() &&
             (state == GunState.Idle || state == GunState.Recovering) &&
-            Time.time >= lastFired + stats.fireDelay)
+            Time.time >= lastFired + stats.fireDelay &&
+            !IsBarrelBlocked())
             return true;
         else
             return false;
@@ -393,19 +400,28 @@ public class Gun : Weapon
             return false;
     }
 
+    /// <summary>
+    /// Tests if anything is blocking the barrel
+    /// </summary>
+    /// <returns>True if blocked</returns>
+    public virtual bool IsBarrelBlocked ()
+    {
+        return Physics2D.OverlapCircle(barrelTip.position, 0.2f, LayerMask.GetMask("Map"));// || Physics2D.CircleCast(barrelTip.position, 0.2f, barrelTip.right, 0.3f, LayerMask.GetMask("Map"));
+    }
+    #endregion CheckMethods
+
+    #region General
     /// <param name="acc">Weapons accuracy, between 0 and 1</param>
     /// <returns>Affective spead, between 0 and 1</returns>
     protected float GetAccuracyModifier(float acc)
     {
         float rand = Random.Range(0f, 1f);
-        return Mathf.Pow(rand, 1f/(1f-acc));
+        if (rand <= 0.5f + acc/2)
+            return rand * (1 - acc); // slope = 1-acc
+        else
+            return 1 - (1/(1-acc) * (1-rand)); // slope = 1/(1-acc)
     }
-}
-
-
-public enum GunState
-{
-    Idle, Recovering, Reloading, Switching
+    #endregion General
 }
 
 
@@ -413,6 +429,7 @@ public enum GunState
 [System.Serializable]
 public class GunStats
 {
+    #region Properties
     [Tooltip("Time in s between bursts - Keep above .033")]
     public float burstDelay = 0.4f; // (s)
     [Tooltip("Used during bursts, time between shots")]
@@ -426,7 +443,9 @@ public class GunStats
     public float reloadDelay = 1; // (s)
     [Tooltip("Time to equip")]
     public float equipDelay = 0.5f; // (s)
+    #endregion Properties
 
+    #region Constructors
     public GunStats ()
     {
         burstDelay = 0.4f;
@@ -448,6 +467,14 @@ public class GunStats
         reloadDelay = _reloadDelay;
         equipDelay = _equipDelay;
     }
+    #endregion Constructors
+}
+
+
+#region Enums
+public enum GunState
+{
+    Idle, Recovering, Reloading, Switching
 }
 
 public enum AmmoType
@@ -484,3 +511,4 @@ public enum ReloadType
     Overheat,
     Energy
 }
+#endregion Enums

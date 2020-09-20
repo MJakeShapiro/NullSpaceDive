@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EntityMovement : MonoBehaviour
 {
+    #region Properties
     protected Entity.EntityReferenceContainer container;
 
     [Tooltip("Movement speed in m/s")]
@@ -16,16 +17,12 @@ public class EntityMovement : MonoBehaviour
     private float speedFac;
 
     private Rigidbody2D rb;
+    #endregion
 
-
+    #region Initialization
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        HandleMovement();
     }
 
     /// <summary>
@@ -35,6 +32,13 @@ public class EntityMovement : MonoBehaviour
     public void SetEntityReference(Entity.EntityReferenceContainer _container)
     {
         container = _container;
+    }
+    #endregion
+
+    #region UpdateMethods
+    protected virtual void FixedUpdate()
+    {
+        HandleMovement();
     }
 
     protected virtual void HandleMovement()
@@ -56,7 +60,9 @@ public class EntityMovement : MonoBehaviour
                 break;
         }
     }
+    #endregion
 
+    #region Input
     public virtual void SetMoveDirection(Vector2 newDirection)
     {
         moveDirection = newDirection.normalized;
@@ -73,11 +79,14 @@ public class EntityMovement : MonoBehaviour
     {
         moveDirection = Vector2.zero;
     }
+    #endregion
 
+    #region Enums
     public enum MovementType
     {
         MovePosition,
         Velocity,
         AddForce
     }
+    #endregion
 }

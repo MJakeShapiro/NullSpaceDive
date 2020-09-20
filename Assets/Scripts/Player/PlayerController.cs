@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : EntityController
 {
+    #region Properties
     public static List<PlayerController> players = new List<PlayerController>();
 
     public PlayerInput input;
@@ -32,8 +33,9 @@ public class PlayerController : EntityController
     public int lookΔSmoothing;
 
     private List<Vector2> smoothingList = new List<Vector2>();
+    #endregion Properties
 
-
+    #region Initialization
     protected void OnEnable()
     {
         players.Add(this);
@@ -43,8 +45,9 @@ public class PlayerController : EntityController
     {
         players.Remove(this);
     }
+    #endregion
 
-
+    #region UpdateMethods
     protected override void Update()
     {
         base.Update();
@@ -105,7 +108,9 @@ public class PlayerController : EntityController
                 container.equipment.EquipPreviousWeapon();
         }
     }
+    #endregion
 
+    #region Rumble
     private void HandleRumble ()
     {
         for (int i=0; i<rumbles.Count; i++)
@@ -149,7 +154,9 @@ public class PlayerController : EntityController
         rumbles.Clear();
         Gamepad.current.SetMotorSpeeds(0, 0);
     }
+    #endregion
 
+    #region General
     private void UpdateCrosshair()
     {
         if (crosshair)
@@ -174,11 +181,14 @@ public class PlayerController : EntityController
             useLookΔ = true;
         }
     }
+    #endregion
 }
 
+#region RumbleClass
 [System.Serializable]
 public class Rumble
 {
+    #region Properties
     public Vector2 speed;
     public float duration;
     public int priority;
@@ -186,6 +196,7 @@ public class Rumble
 
     public static Rumble bullet = new Rumble(new Vector2(0.45f, 0.15f), 0.1f, 41);
     public static Rumble bullet2 = new Rumble(new Vector2(0.2f, 0.05f), 0.15f, 42);
+    #endregion
 
     public Rumble ()
     {
@@ -255,3 +266,4 @@ public class Rumble
         return _anim;
     }
 }
+#endregion

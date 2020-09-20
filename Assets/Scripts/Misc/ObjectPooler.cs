@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ObjectPooler : MonoBehaviour
 {
+    #region Properties
     static ObjectPooler instance;
     [Tooltip("Prefab to be instantiated, must contain a Projectile component")]
     public GameObject projectilePrefab;
@@ -16,7 +17,9 @@ public class ObjectPooler : MonoBehaviour
     public bool createMoreOnFull = true;
     [Tooltip("Maximum allowed objects in pool. -1 for unlimited size")]
     public int maxObjects = -1;
+    #endregion Properties
 
+    #region Initialization
     protected void Awake()
     {
         if (instance)
@@ -40,7 +43,9 @@ public class ObjectPooler : MonoBehaviour
             GenerateNewObject();
         }
     }
+    #endregion Initialization
 
+    #region PrivateMethods
     private GameObject GenerateNewObject ()
     {
         GameObject newObj = Instantiate(projectilePrefab, transform.position, transform.rotation, transform);
@@ -60,7 +65,9 @@ public class ObjectPooler : MonoBehaviour
         projectiles.Remove(obj);
         Destroy(obj);
     }
+    #endregion PrivateMethods
 
+    #region StaticMethods
     /// <summary>
     /// Gets a free object from the pool
     /// <para> Returns null if none are available </para>
@@ -167,4 +174,5 @@ public class ObjectPooler : MonoBehaviour
         myObj.transform.rotation = _transform.rotation;
         return myObj;
     }
+    #endregion StaticMethods
 }

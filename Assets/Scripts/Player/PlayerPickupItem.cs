@@ -6,17 +6,21 @@
 /// </summary>
 public class PlayerPickupItem : MonoBehaviour
 {
+    #region Properties
     public WeaponType[] weapon = new WeaponType[1];
 
     public bool deactivateOnGet = false;
     public bool destroyOnGet = false;
+    #endregion Properties
 
+    #region Initialization
     private void Awake()
     {
         foreach (WeaponType wt in weapon)
             if (wt == WeaponType.Null)
                 Debug.LogWarning($"Uh oh! WeaponType cant be null for '{name}' PickupItem!");
     }
+    #endregion Initialization
 
     void OnTriggerEnter2D(Collider2D col)
     {
