@@ -35,6 +35,14 @@ PrefabInstance:
       propertyPath: bullet.stats.speedFlux
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8412308157843913768, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
+      propertyPath: bullet.graphics.scale.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8412308157843913768, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
+      propertyPath: bullet.graphics.scale.y
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 8412308157843913769, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
       propertyPath: stats.burstDelay
       value: 2
@@ -93,7 +101,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8479288892328114247, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
       propertyPath: m_Name
-      value: M4 Super 90 - Enemy Variant
+      value: M4_Super - Enemy Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}

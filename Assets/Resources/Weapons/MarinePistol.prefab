@@ -245,8 +245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 2
   faction: 0
-  firingType: 1
-  ammoType: 1
+  firingType: 0
+  ammoType: 2
   reloadType: 1
   stats:
     burstDelay: 0.25
@@ -287,16 +287,13 @@ MonoBehaviour:
     graphics:
       sprite: {fileID: 21300000, guid: e63e5c0479e18114094563df8d6400f3, type: 3}
       color: {r: 0.7176471, g: 0.5647059, b: 0.21960786, a: 1}
+      scale: {x: 0.175, y: 0.175}
       size: 0.175
-    mods:
-      onHitTarget: []
-      onHitWall: []
-      onReflected: []
-      onRangeMet: []
-      onRemove: []
+    mods: []
   bulletsPerShot: 1
   magSize: 10
   curAmmo: 10
+  debug_modType: 0
 --- !u!1 &77398891956913048
 GameObject:
   m_ObjectHideFlags: 0

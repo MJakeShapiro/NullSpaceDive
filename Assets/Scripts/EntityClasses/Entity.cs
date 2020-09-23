@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    #region Properties
     public const float resistanceFactor = 0.25f; // Each level of resistance multiplies damage by this factor
 
     public Faction faction;
@@ -10,7 +11,9 @@ public class Entity : MonoBehaviour
     public EntityStats entityStats;
     //public EntityState state;
     //public bool activateOnStart;
+    #endregion Properties
 
+    #region Initialization
     void Reset()
     {
         SetReferences();
@@ -22,16 +25,6 @@ public class Entity : MonoBehaviour
         entityStats.Restore();
     }
 
-    protected virtual void Start()
-    {
-
-    }
-
-    protected virtual void Update()
-    {
-        // Healing over time? idk
-    }
-    
     [Button]
     protected virtual void SetReferences()
     {
@@ -48,7 +41,9 @@ public class Entity : MonoBehaviour
         if (container.aiming == null)
             container.aiming = GetComponentInChildren<EntityAiming>();
     }
+    #endregion Initialization
 
+    #region DamageMethods
     /// <summary>
     /// Damages the entity, based on the paramaters.
     /// </summary>
@@ -56,32 +51,36 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool Damage(float damage, Element element, out float damageDealt)
+    public bool Damage(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0) // Input sanitizing
-        { Debug.Log($"Damages less than 1 not currently supported!\n{damage}, {element}"); return false; }
+        { Debug.Log($"Damages less than 1 not currently supported!\n{damage}, E: {element}"); return false; }
 
         bool killed = false;
 
         switch (element)
         {
             case Element.Plasma:
-                float damageMult = 2f / (2f + (entityStats.GetShields()>0?1f:0f) + (entityStats.GetArmor()>0?1f:0f)); // return 1 for only hp, .667 for shields or armor, .5 for both
+                float plasmaMult = 2f / (2f + (entityStats.GetShields()>0?1f:0f) + (entityStats.GetArmor()>0?1f:0f)); // return 1 for only hp, .667 for shields or armor, .5 for both
                 if (entityStats.GetShields() > 0)
                 {
-                    killed = DamageShields(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageShields(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 if (entityStats.GetArmor() > 0)
                 {
-                    killed = DamageArmor(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageArmor(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 if (entityStats.GetHealth() > 0)
                 {
-                    killed = DamageHealth(damage*damageMult, element, out float _damageDealt);
+                    killed = DamageHealth(damage* plasmaMult, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
+                    damageResisted += _damageResisted;
                 }
                 break;
 
@@ -89,21 +88,24 @@ public class Entity : MonoBehaviour
             default:
                 if (entityStats.GetShields() > 0)
                 {
-                    killed = DamageShields(damage, element, out float _damageDealt);
+                    killed = DamageShields(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    damage -= _damageDealt;
+                    damageResisted += _damageResisted;
+                    damage -= _damageDealt + _damageResisted;
                 }
                 if (entityStats.GetArmor() > 0 && damage > 0)
                 {
-                    killed = DamageArmor(damage, element, out float _damageDealt);
+                    killed = DamageArmor(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    damage -= _damageDealt;
+                    damageResisted += _damageResisted;
+                    damage -= _damageDealt + _damageResisted;
                 }
                 if (entityStats.GetHealth() > 0 && damage > 0)
                 {
-                    killed = DamageHealth(damage, element, out float _damageDealt);
+                    killed = DamageHealth(damage, element, out float _damageDealt, out float _damageResisted);
                     damageDealt += _damageDealt;
-                    //damage -= _damageDealt; // Overkill damage, if ever needed
+                    damageResisted += _damageResisted;
+                    //damage -= _damageDealt + _damageResisted; // Overkill damage, if ever needed
                 }
                 break;
         }
@@ -117,9 +119,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageShields(float damage, Element element, out float damageDealt)
+    public bool DamageShields(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         //damageLeft = damage;
         if (damage <= 0)
             return false;
@@ -127,6 +130,9 @@ public class Entity : MonoBehaviour
         int resistanceLevel = Mathf.Clamp(entityStats.resistances.GetResistanceLevel(element) + (element==Element.Electric?1:0), -2, +2);
         float effectiveDamage = damage * (1+resistanceLevel*resistanceFactor);
         damageDealt = Mathf.Clamp(effectiveDamage, 0, entityStats.GetShields());
+
+        damageResisted = Mathf.Min(entityStats.GetShields(), damage-effectiveDamage);
+
         entityStats.SetShields(entityStats.GetShields()-damageDealt);
         if (entityStats.GetShields() == 0)
         {
@@ -151,9 +157,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageArmor(float damage, Element element, out float damageDealt)
+    public bool DamageArmor(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0)
             return false;
 
@@ -184,9 +191,10 @@ public class Entity : MonoBehaviour
     /// <param name="element">Element type of incoming damage</param>
     /// <param name="damageDealt">Outgoing -> Damage actually dealt</param>
     /// <returns>True if the Entity was killed</returns>
-    public bool DamageHealth(float damage, Element element, out float damageDealt)
+    public bool DamageHealth(float damage, Element element, out float damageDealt, out float damageResisted)
     {
         damageDealt = 0;
+        damageResisted = 0;
         if (damage <= 0)
             return false;
 
@@ -205,7 +213,9 @@ public class Entity : MonoBehaviour
 #endif
         return false;
     }
+    #endregion DamageMethods
 
+    #region EventMethods
     /// <summary>
     /// Is called whenever the Entitys shield is set to 0
     /// </summary>
@@ -240,13 +250,17 @@ public class Entity : MonoBehaviour
         else
             DefaultDeathSequence();
     }
+    #endregion EventMethods
 
+    #region General
     protected void DefaultDeathSequence()
     {
         //TEMPORARY
         Destroy(gameObject);
     }
+    #endregion General
 
+    #region StaticMethods
     /// <summary>
     /// Tests whether two factions can attack each other
     /// </summary>
@@ -255,11 +269,46 @@ public class Entity : MonoBehaviour
     /// <returns>True if they can damage each other</returns>
     public static bool CanAttack(Faction fac1, Faction fac2)
     {
-        if ((fac1 == Faction.Player && fac2 == Faction.Ally) || (fac1 == Faction.Ally && fac2 == Faction.Player))
-            return false;
-        else
-            return (fac1 != fac2);
+        switch (fac2)
+        {
+            case Faction.Player:
+            case Faction.Ally:
+                if (fac1 != Faction.Player && fac1 != Faction.Ally)
+                    return true;
+                else
+                    return false;
+            case Faction.Enemy:
+                if (fac1 != Faction.Enemy)
+                    return true;
+                else
+                    return false;
+            case Faction.Hazard:
+                if (fac1 != Faction.Hazard)
+                    return true;
+                else
+                    return false;
+            default:
+                return false;
+        }
     }
+
+    /// <returns>The new faction of the reflected projectile</returns>
+    public static Faction GetReflectedFaction (Faction initialFac)
+    {
+        switch (initialFac)
+        {
+            case Faction.Player:
+            case Faction.Ally:
+                return Faction.Enemy;
+            case Faction.Enemy:
+                return Faction.ReflectedEnemy;
+            case Faction.Hazard:
+                return Faction.ReflectedHazard;
+            default:
+                return Faction.None;
+        }
+    }
+    #endregion StaticMethods
 
     [System.Serializable]
     public class EntityReferenceContainer
@@ -271,6 +320,7 @@ public class Entity : MonoBehaviour
         public EntityMovement movement;
         public EntityAiming aiming;
 
+        #region Constructors
         public void SetEntityReferences ()
         {
             controller?.SetEntityReference(this);
@@ -278,12 +328,14 @@ public class Entity : MonoBehaviour
             movement?.SetEntityReference(this);
             aiming?.SetEntityReference(this);
         }
+        #endregion Constructors
     }
 }
 
 [System.Serializable]
 public class EntityStats
 {
+    #region Properties
     [ReadOnly][SerializeField]
     protected float health;
     [ProgressBar("Health", 100, EColor.Red)][SerializeField]
@@ -309,17 +361,9 @@ public class EntityStats
     public HealthType criticalType; // Which value kills on 0
 
     public Resistances resistances;
+    #endregion Properties
 
-    /// <summary>
-    /// Restores values to full
-    /// </summary>
-    public void Restore ()
-    {
-        SetHealth(maxHealth);
-        SetArmor(maxArmor);
-        SetShields(maxShields);
-    }
-
+    #region Fields
     /// <summary>
     /// Public accessor, updates inspector views as well
     /// </summary>
@@ -369,7 +413,21 @@ public class EntityStats
     {
         return shields;
     }
+    #endregion Fields
 
+    #region General
+    /// <summary>
+    /// Restores values to full
+    /// </summary>
+    public void Restore()
+    {
+        SetHealth(maxHealth);
+        SetArmor(maxArmor);
+        SetShields(maxShields);
+    }
+    #endregion General
+
+    #region Enums
     public enum HealthType
     {
         Health,
@@ -385,10 +443,12 @@ public class EntityStats
         Resistant = -1,
         VeryResistant = -2
     }
+    #endregion
 
     [System.Serializable]
     public class Resistances
     {
+        #region Properties
         public ResistanceLevel basic;
         public ResistanceLevel acid;
         public ResistanceLevel electric;
@@ -399,13 +459,14 @@ public class EntityStats
         public ResistanceLevel radiation;
         public ResistanceLevel water;
         public ResistanceLevel wind;
+        #endregion
 
-
+        #region Methods
         /// <param name="element">Type to test resistance for</param>
         /// <returns>This entitys resistance level for the supplied element</returns>
         public int GetResistanceLevel (Element element)
         {
-            switch (element)
+            switch (element) // Rework this to use a named array - through custom inspector code
             {
                 case Element.None:
                     return (int)basic;
@@ -434,9 +495,11 @@ public class EntityStats
                     return 0;
             }
         }
+        #endregion
     }
 }
 
+#region Enums
 public enum Faction
 {
     None = 0, // Represents obstacles
@@ -462,3 +525,4 @@ public enum Element
     Water,
     Wind
 }
+#endregion

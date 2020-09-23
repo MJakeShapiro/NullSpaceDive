@@ -160,17 +160,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 1
-  faction: 1
+  faction: 0
   firingType: 0
-  ammoType: 1
+  ammoType: 2
   reloadType: 1
   stats:
-    burstDelay: 0.0667
-    fireDelay: 0
-    burstCount: 0
+    burstDelay: 0.5
+    fireDelay: 0.0667
+    burstCount: 5
     spread: 7
-    accuracy: 0.5
-    reloadDelay: 2.5
+    accuracy: 0.4
+    reloadDelay: 2.1
     equipDelay: 0.7
   mag: {fileID: 4249800852092876381}
   state: 3
@@ -196,23 +196,20 @@ MonoBehaviour:
     stats:
       faction: 1
       element: 0
-      damage: 8
+      damage: 7
       speed: 18
-      speedFlux: 0
+      speedFlux: 0.35
       range: 100
     graphics:
       sprite: {fileID: 21300000, guid: e63e5c0479e18114094563df8d6400f3, type: 3}
       color: {r: 0.7924528, g: 0.64891464, b: 0.3700605, a: 1}
+      scale: {x: 0.2, y: 0.2}
       size: 0.2
-    mods:
-      onHitTarget: []
-      onHitWall: []
-      onReflected: []
-      onRangeMet: []
-      onRemove: []
+    mods: []
   bulletsPerShot: 1
-  magSize: 250
-  curAmmo: 250
+  magSize: 30
+  curAmmo: 0
+  debug_modType: 0
 --- !u!1 &4316887960174919054
 GameObject:
   m_ObjectHideFlags: 0

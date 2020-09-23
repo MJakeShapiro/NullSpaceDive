@@ -1,20 +1,23 @@
-﻿using UnityEngine;
+﻿using NaughtyAttributes;
+using UnityEngine;
 
 [System.Serializable]
 public class SimpleMag : Magazine
 {
+    #region Properties
     public ProjectileContainer bullet;
+    [HorizontalLine]
     public int bulletsPerShot = 1;
     public int magSize;
     protected int maxAmmo;
     [SerializeField]
     protected int curAmmo;
+    [HorizontalLine]
+    [SerializeField]
+    private ProjModType debug_modType = default;
+    #endregion
 
-    public override void Update ()
-    {
-        
-    }
-
+    #region Initialize
     public override void Initialize (Faction fac)
     {
         SetStats();
@@ -28,7 +31,16 @@ public class SimpleMag : Magazine
         maxAmmo = magSize;
         // Also update mods if needed? IDK where to put that yet
     }
+    #endregion
 
+    #region UpdateMethods
+    public override void Update ()
+    {
+
+    }
+    #endregion
+
+    #region Methods
     public override bool CanFire ()
     {
         if (curAmmo > 0)
@@ -83,4 +95,13 @@ public class SimpleMag : Magazine
         curAmmo = Mathf.Clamp(curAmmo + n, 0, maxAmmo);
         return true;
     }
+    #endregion
+
+    #region Debug
+    [Button]
+    protected void AddProjMods ()
+    {
+        bullet.AddNewProjMod(debug_modType);
+    }
+    #endregion
 }

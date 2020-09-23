@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class DummyEnemy : EntityController
 {
+    #region Properties
     public bool holdTrigger;
     public bool chasePlayer;
     public bool moveInCircles;
@@ -10,7 +11,9 @@ public class DummyEnemy : EntityController
 
     [SerializeField] [ReadOnly]
     private GameObject target = default;
+    #endregion Properties
 
+    #region Initialization
     private void Awake()
     {
 
@@ -21,7 +24,9 @@ public class DummyEnemy : EntityController
         if (PlayerController.players?[0] != null)
             target = PlayerController.players[0].gameObject;
     }
+    #endregion Initialization
 
+    #region UpdateMethods
     protected override void HandleMovement()
     {
         if (chasePlayer && target!=null && DistanceFromTarget() > range - 0.5f)
@@ -59,11 +64,14 @@ public class DummyEnemy : EntityController
         else
             container.equipment.TriggerAction1(false);
     }
+    #endregion UpdateMethods
 
+    #region General
     private float DistanceFromTarget ()
     {
         if (target == null)
             return float.PositiveInfinity;
         return (target.transform.position - transform.position).magnitude;
     }
+    #endregion General
 }

@@ -4,34 +4,44 @@ using UnityEngine;
 
 public class EntityEquipment : MonoBehaviour
 {
+    #region Properties
     Entity.EntityReferenceContainer container;
 
     public List<Weapon> weapons = new List<Weapon>(1);
     public int maxWeapons = 1;
 
+    public string item = "None";
+    public int itemAmmount = 0;
+
     [SerializeField][ReadOnly]
     protected int weaponIndex = 0;
+    #endregion Properties
 
+    #region Initialization
     private void Awake()
     {
         foreach (Weapon wep in weapons)
             wep.Initialize(container.entity);
     }
 
-    void Update()
-    {
-        // foreach () ~> WeaponCD.Update();
-    }
-
     /// <summary>
     /// Sets the Entity references to other Entity componenets
     /// </summary>
     /// <param name="_container">Reference Container Class</param>
-    public virtual void SetEntityReference (Entity.EntityReferenceContainer _container)
+    public virtual void SetEntityReference(Entity.EntityReferenceContainer _container)
     {
         container = _container;
     }
+    #endregion
 
+    #region UpdateMethods
+    void Update()
+    {
+        // foreach () ~> WeaponCD.Update();
+    }
+    #endregion
+
+    #region Input
     public virtual void TriggerAction1 (bool triggered)
     {
         if (weapons.Count > 0)
@@ -112,7 +122,16 @@ public class EntityEquipment : MonoBehaviour
         return true;
     }
 
+    public virtual bool PickupItem (string _name, int _ammount = 1)
+    {
+        Debug.Log(gameObject.name + " picked up " + _ammount + " " + _name);
+        item = _name;
+        itemAmmount = _ammount;
+        return true;
+    }
+    #endregion
 
+    #region Equipment Management
     protected virtual Weapon InstantiateNewWeapon(WeaponType type)
     {
         GameObject obj = EquipmentManager.GetWeapon(type);
@@ -141,18 +160,21 @@ public class EntityEquipment : MonoBehaviour
         weapons[index].PutAway();
         Destroy(weapons[index].gameObject);
     }
+    #endregion
 
+    #region CheckMethods
     public bool IsHoldingWeapon ()
     {
         return weapons.Count > 0;
     }
+    #endregion
 }
-
 
 
 
 public class EquipmentManager
 {
+    #region StaticMethods
     public static GameObject GetWeapon(WeaponType type)
     {
         GameObject obj = Resources.Load("Weapons/"+type.ToString(), typeof(GameObject)) as GameObject;
@@ -177,26 +199,24 @@ public class EquipmentManager
                     //else passed!
                 }
                 else
-                {
-                    Debug.LogWarning("Resources/Weapons/" + ((WeaponType)i).ToString() + " not a valid Weapon");
-                    infractions++;
-                }
+                    Debug.LogWarning($"Infraction {++infractions}\nResources/Weapons/{(WeaponType)i} not a valid Weapon");
             }
             else
-            {
-                Debug.LogWarning("Resources/Weapons/" + ((WeaponType)i).ToString() + " not a valid GameObject");
-                infractions++;
-            }
+                Debug.LogWarning($"Infraction {++infractions}\nResources/Weapons/{(WeaponType)i} not a valid GameObject");
         }
 
         return infractions<=0;
     }
+    #endregion StaticMethods
 }
 
+#region Enums
 public enum WeaponType
 {
     Null = 0,
     FAMAS,
     MarinePistol,
-    M4_Super
+    M4_Super,
+    SCAR
 }
+#endregion
