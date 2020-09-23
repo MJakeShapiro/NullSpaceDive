@@ -29,7 +29,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8412308157843913768, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
       propertyPath: bullet.graphics.size
-      value: 1
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8412308157843913768, guid: 357f00c896a5fb5459c8f2bfc1980e91, type: 3}
       propertyPath: bullet.stats.speedFlux

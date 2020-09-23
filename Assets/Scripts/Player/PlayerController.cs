@@ -48,13 +48,14 @@ public class PlayerController : EntityController
     #endregion
 
     #region UpdateMethods
-    protected override void Update()
+    protected override void Update ()
     {
         base.Update();
         HandleRumble();
+        HandleInteract();
     }
 
-    protected override void HandleMovement()
+    protected override void HandleMovement ()
     {
         Vector2 dir = input.actions.FindAction("Move").ReadValue<Vector2>();
         container.movement.SetMoveDirection(dir, dir.magnitude);
@@ -95,7 +96,7 @@ public class PlayerController : EntityController
         UpdateCrosshair();
     }
 
-    protected override void HandleEquipment()
+    protected override void HandleEquipment ()
     {
         container.equipment.TriggerAction1(input.actions.FindAction("Fire").ReadValue<float>() >= 0.4f);
         container.equipment.TriggerAction2(input.actions.FindAction("Reload").ReadValue<float>() >= 0.4f);
@@ -107,6 +108,44 @@ public class PlayerController : EntityController
             else
                 container.equipment.EquipPreviousWeapon();
         }
+    }
+
+    private Interactable currentHighlight;
+    private bool interactKeyHeld = false;
+    private void HandleInteract ()
+    {
+        bool interactKeyPressed = input.actions.FindAction("Interact").ReadValue<float>() >= 0.4f;
+
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, 0.25f, lookDirection, 1f, LayerMask.GetMask("Interactable"));
+        if (hit)
+        {
+            Interactable other = hit.collider.GetComponentInParent<Interactable>();
+            if (other)
+            {
+                if (other != currentHighlight)
+                {
+                    if (currentHighlight != null)
+                        currentHighlight.SetSelectedState(false);
+                    currentHighlight = other;
+                    currentHighlight.SetSelectedState(true);
+                }
+
+                if (interactKeyPressed && !interactKeyHeld)
+                    currentHighlight.Select(container.entity);
+            }
+            else if (currentHighlight != null)
+            {
+                currentHighlight.SetSelectedState(false);
+                currentHighlight = null;
+            }
+        }
+        else if (currentHighlight != null)
+        {
+            currentHighlight.SetSelectedState(false);
+            currentHighlight = null;
+        }
+
+        interactKeyHeld = interactKeyPressed;
     }
     #endregion
 

@@ -54,8 +54,6 @@ public class FBI
     #endregion
 }
 
-
-
 /// <summary>
 /// Container that passes generated loot to the game
 /// </summary>

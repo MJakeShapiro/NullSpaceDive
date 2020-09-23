@@ -49,7 +49,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4249800852092876381, guid: e3205a5e9614a514e82e4cad5cbab9cd, type: 3}
       propertyPath: bullet.graphics.size
-      value: 1
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 4249800852092876381, guid: e3205a5e9614a514e82e4cad5cbab9cd, type: 3}
       propertyPath: bullet.graphics.scale.x

@@ -10,6 +10,9 @@ public class EntityEquipment : MonoBehaviour
     public List<Weapon> weapons = new List<Weapon>(1);
     public int maxWeapons = 1;
 
+    public string item = "None";
+    public int itemAmmount = 0;
+
     [SerializeField][ReadOnly]
     protected int weaponIndex = 0;
     #endregion Properties
@@ -116,6 +119,14 @@ public class EntityEquipment : MonoBehaviour
             weapons.Add(InstantiateNewWeapon(type));
             EquipWeapon(weapons.Count - 1);
         }
+        return true;
+    }
+
+    public virtual bool PickupItem (string _name, int _ammount = 1)
+    {
+        Debug.Log(gameObject.name + " picked up " + _ammount + " " + _name);
+        item = _name;
+        itemAmmount = _ammount;
         return true;
     }
     #endregion

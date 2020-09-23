@@ -204,7 +204,7 @@ MonoBehaviour:
       sprite: {fileID: 21300000, guid: e63e5c0479e18114094563df8d6400f3, type: 3}
       color: {r: 0.7924528, g: 0.64891464, b: 0.3700605, a: 1}
       scale: {x: 0.2, y: 0.2}
-      size: 1
+      size: 0.2
     mods: []
   bulletsPerShot: 1
   magSize: 30

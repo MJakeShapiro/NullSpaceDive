@@ -416,10 +416,10 @@ public class Gun : Weapon
     protected float GetAccuracyModifier(float acc)
     {
         float rand = Random.Range(0f, 1f);
-        if (rand <= 0.5f + acc/2)
-            return rand * (1 - acc); // slope = 1-acc
+        if (rand <= 0.5f + acc/2f)
+            return rand * (1f - acc); // slope = 1-acc
         else
-            return 1 - (1/(1-acc) * (1-rand)); // slope = 1/(1-acc)
+            return 1f - (1f/(1f-acc) * (1f-rand)); // slope = 1/(1-acc)
     }
     #endregion General
 }
