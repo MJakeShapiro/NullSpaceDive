@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8358805733736279357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8358805733736279359}
+  - component: {fileID: 8358805733736279358}
+  - component: {fileID: 3516196404933107838}
+  - component: {fileID: 8105506893724667168}
+  - component: {fileID: 1268875235}
+  m_Layer: 0
+  m_Name: Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8358805733736279359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8358805733736279357}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8358805733736279358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8358805733736279357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3309d4d5277732049a7a2665785f6ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chanceWalkerChangeDir: 0.5
+  chanceWalkerSpawn: 0.05
+  chanceWalkerDestoy: 0.05
+  chanceChestSpawn: 0
+  chanceChestWallFavor: 0.01
+  chanceEnemySpawn: 0.05
+  maxHallwayLength: 3
+  wallObj: {fileID: 1502750715140536, guid: 71cad0845f76d74418bc32effd7b94ac, type: 3}
+  floorObj: {fileID: 1652600507776870, guid: 03f5b151b19bfd34db94a75738b33bad, type: 3}
+  chestObj: {fileID: 4233791241299295834, guid: 63055dc5a022d554ba9da72d8a384e0f, type: 3}
+  enemyObj: {fileID: 6323280020206797258, guid: 85ad5c0dab3053c41b7675e9372346e2, type: 3}
+--- !u!114 &3516196404933107838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8358805733736279357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a581c0228795a44a5eb0aa93904ca4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8105506893724667168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8358805733736279357}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b102304b3b412d4e87b618ab78004bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeBetweenLoops: 0.001
+  timeBetweenLoopsLong: 0.1
+  chanceWalkerChangeDir: 0
+  chanceWalkerSpawn: 0.05
+  chanceWalkerDestoy: 0.05
+  chanceChestSpawn: 0
+  chanceChestWallFavor: 0.01
+  chanceEnemySpawn: 0.05
+  maxHallwayLength: 3
+  wallObj: {fileID: 1502750715140536, guid: 71cad0845f76d74418bc32effd7b94ac, type: 3}
+  floorObj: {fileID: 1652600507776870, guid: 03f5b151b19bfd34db94a75738b33bad, type: 3}
+  chestObj: {fileID: 4233791241299295834, guid: 63055dc5a022d554ba9da72d8a384e0f, type: 3}
+  enemyObj: {fileID: 6323280020206797258, guid: 85ad5c0dab3053c41b7675e9372346e2, type: 3}
+--- !u!114 &1268875235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8358805733736279357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a581c0228795a44a5eb0aa93904ca4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
