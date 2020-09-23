@@ -13,11 +13,11 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - BlockingLayer
+  - Bullet
+  - Map
+  - Entity
+  - Interactable
   - 
   - 
   - 
@@ -38,21 +38,30 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Floor
+    uniqueID: 3131993583
+    locked: 0
+  - name: Floor Splatter
+    uniqueID: 4073023747
+    locked: 0
+  - name: Shadow
+    uniqueID: 2917807395
+    locked: 0
+  - name: Ground FX
+    uniqueID: 494833293
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Floor
-    uniqueID: 1217975827
+  - name: FX
+    uniqueID: 2218044549
     locked: 0
-  - name: Wall
-    uniqueID: 794299307
+  - name: Ceiling Shadow
+    uniqueID: 747032707
     locked: 0
-  - name: Chests
-    uniqueID: 629717317
+  - name: Crosshair
+    uniqueID: 2678898141
     locked: 0
-  - name: Enemies
-    uniqueID: 4093064249
-    locked: 0
-  - name: Player
-    uniqueID: 2335686569
+  - name: Ceiling
+    uniqueID: 784816305
     locked: 0

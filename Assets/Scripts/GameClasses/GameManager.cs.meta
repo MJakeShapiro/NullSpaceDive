@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Scripts/Restarter.cs.meta
+guid: ee572bcd18da20f429d04044640fc20e
+=======
+guid: 898378e9025dc45448793518e3bb5081
+>>>>>>> master:Assets/Scripts/GameClasses/GameManager.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
