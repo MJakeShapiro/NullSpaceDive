@@ -273,6 +273,7 @@ public class GameManager : MonoBehaviour
         /// </summary>
         public static void DrawBulletPath (Vector2 center, Vector2 direction, float radius = 0.2f, bool partial = false)
         {
+            Vector2 offset; // Var used by some cases
             Color pathColor = _pathColor;
             if (partial)
                 pathColor = new Color(0.45f, 0.45f, 0.8f, 0.55f);
@@ -282,20 +283,50 @@ public class GameManager : MonoBehaviour
                 case 0:
                     break;
                 case DrawMode.Arrows:
-                    DrawArrow(center, direction * Time.fixedDeltaTime, pathColor, duration: pathDuration);
+                    DrawArrow(center, direction*Time.fixedDeltaTime, pathColor, pathDuration);
                     break;
                 case DrawMode.Circles:
-                    DrawCircle(center, pathColor, radius, duration: pathDuration);
+                    DrawCircle(center, pathColor, radius, pathDuration, partial?31:17);
                     break;
                 case DrawMode.DirectionalCircles:
-                    DrawDirectionalCircle(center, direction, pathColor, radius, duration: pathDuration);
+                    DrawDirectionalCircle(center, direction, pathColor, radius, pathDuration, partial?31:17);
                     break;
                 case DrawMode.Trail:
-                    Debug.DrawRay(center, -direction * Time.fixedDeltaTime, pathColor, duration: pathDuration);
+                    Debug.DrawRay(center, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
                     break;
                 case DrawMode.TrailDotted:
-                    Debug.DrawRay(center, -direction * Time.fixedDeltaTime, pathColor, duration: pathDuration);
-                    DrawCircle(center, pathColor, radius/3, duration: pathDuration);
+                    Debug.DrawRay(center, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    DrawCircle(center, pathColor, radius/3, pathDuration, 9);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.TrailHashed:
+                    offset = RotateVector2By90(direction).normalized*radius;
+                    Debug.DrawRay(center, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    Debug.DrawLine(center+offset, center-offset, pathColor, pathDuration);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.Width:
+                    offset = RotateVector2By90(direction).normalized*radius;
+                    Debug.DrawRay(center + offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    Debug.DrawRay(center - offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    break;
+                case DrawMode.WidthDotted:
+                    offset = RotateVector2By90(direction).normalized*radius;
+                    Debug.DrawRay(center+offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    Debug.DrawRay(center-offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    DrawCircle(center, pathColor, radius/3, pathDuration, 9);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.WidthHashed:
+                    offset = RotateVector2By90(direction).normalized*radius;
+                    Debug.DrawRay(center+offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    Debug.DrawRay(center-offset, -direction*Time.fixedDeltaTime, pathColor, pathDuration);
+                    Debug.DrawLine(center+offset, center-offset, pathColor, pathDuration);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
                     break;
                 default:
                     Debug.LogWarning("DrawBulletPath does not currently support case " + _bulletDrawMode + "\n Go bug Staik about it");
@@ -308,6 +339,7 @@ public class GameManager : MonoBehaviour
         /// </summary>
         public static void DrawBulletPath(Vector2 center, Vector2 direction, Vector2 lastPosition, float radius = 0.2f, bool partial = false)
         {
+            Vector2 offset; // Var used by some cases
             Color pathColor = _pathColor;
             if (partial)
                 pathColor = new Color(0.45f, 0.45f, 0.8f, 0.55f);
@@ -317,20 +349,50 @@ public class GameManager : MonoBehaviour
                 case 0:
                     break;
                 case DrawMode.Arrows:
-                    DrawArrow(lastPosition, center-lastPosition, pathColor, duration: pathDuration);
+                    DrawArrow(lastPosition, center - lastPosition, pathColor, pathDuration);
                     break;
                 case DrawMode.Circles:
-                    DrawCircle(center, pathColor, radius, duration: pathDuration);
+                    DrawCircle(center, pathColor, radius, pathDuration, partial?31:17);
                     break;
                 case DrawMode.DirectionalCircles:
-                    DrawDirectionalCircle(center, direction, pathColor, radius, duration: pathDuration);
+                    DrawDirectionalCircle(center, direction, pathColor, radius, pathDuration, partial?31:17);
                     break;
                 case DrawMode.Trail:
-                    Debug.DrawLine(lastPosition, center, pathColor, duration: pathDuration);
+                    Debug.DrawLine(lastPosition, center, pathColor, pathDuration);
                     break;
                 case DrawMode.TrailDotted:
-                    Debug.DrawLine(lastPosition, center, pathColor, duration: pathDuration);
-                    DrawCircle(center, pathColor, radius/3, duration: pathDuration);
+                    Debug.DrawLine(lastPosition, center, pathColor, pathDuration);
+                    DrawCircle(center, pathColor, radius/3, pathDuration, 9);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.TrailHashed:
+                    offset = RotateVector2By90(direction).normalized * radius;
+                    Debug.DrawLine(lastPosition, center, pathColor, pathDuration);
+                    Debug.DrawLine(center+offset, center-offset, pathColor, pathDuration);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.Width:
+                    offset = RotateVector2By90(direction).normalized * radius;
+                    Debug.DrawLine(lastPosition+offset, center+offset, pathColor, pathDuration);
+                    Debug.DrawLine(lastPosition-offset, center-offset, pathColor, pathDuration);
+                    break;
+                case DrawMode.WidthDotted:
+                    offset = RotateVector2By90(direction).normalized * radius;
+                    Debug.DrawLine(lastPosition+offset, center+offset, pathColor, pathDuration);
+                    Debug.DrawLine(lastPosition-offset, center-offset, pathColor, pathDuration);
+                    DrawCircle(center, pathColor, radius/3, pathDuration, 9);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
+                    break;
+                case DrawMode.WidthHashed:
+                    offset = RotateVector2By90(direction).normalized * radius;
+                    Debug.DrawLine(lastPosition+offset, center+offset, pathColor, pathDuration);
+                    Debug.DrawLine(lastPosition-offset, center-offset, pathColor, pathDuration);
+                    Debug.DrawLine(center+offset, center-offset, pathColor, pathDuration);
+                    if (partial)
+                        DrawCircle(center, pathColor, radius, pathDuration, 31);
                     break;
                 default:
                     Debug.LogWarning("DrawBulletPath does not currently support case " + _bulletDrawMode + "\n Go bug Staik about it");
@@ -338,6 +400,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        /// <summary>
+        /// Rotates the vector2 by the specified degrees
+        /// </summary>
         public static Vector2 RotateVector2 (Vector2 vec, float degrees)
         {
             float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
@@ -351,6 +416,20 @@ public class GameManager : MonoBehaviour
 
             return vec;
         }
+
+        /// <summary>
+        /// Rotates the vector2 by 90 degrees
+        /// <para>Uses fancy math tricks, is more effecient than the other RotateVector2</para>
+        /// </summary>
+        public static Vector2 RotateVector2By90(Vector2 vec, bool right = true)
+        {
+            float tx = vec.x;
+
+            vec.x = (right ?  1 : -1) * vec.y;
+            vec.y = (right ? -1 :  1) * tx;
+
+            return vec;
+        }
         #endregion
 
         #region Enums
@@ -361,7 +440,11 @@ public class GameManager : MonoBehaviour
             Circles,
             DirectionalCircles,
             Trail,
-            TrailDotted
+            TrailDotted,
+            TrailHashed,
+            Width,
+            WidthDotted,
+            WidthHashed
         }
         #endregion
     }
