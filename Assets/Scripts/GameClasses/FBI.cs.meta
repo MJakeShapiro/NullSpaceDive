@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/Scripts/GameClasses/FBI.cs.meta
 guid: c7e5f189530df20479f8fabfd1e7c7ec
-=======
-guid: 335e46439d205fe43ac770cd09083d12
->>>>>>> parent of 086590a... Adjusted walker MapGen (Left out current room MapGen):Assets/Scripts/MapGenerator.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

@@ -1,15 +1,10 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 <<<<<<< HEAD:Assets/Prefabs/Generator.prefab.meta
 <<<<<<< HEAD:Assets/Prefabs/Generator.prefab.meta
 guid: 5f208838734b8f44abc1683daa2e5df7
 =======
 guid: 5120a8d98387b5d428e5be146b56c845
 >>>>>>> master:Assets/Resources/Projectiles/Bullet - Rigidbody2D.prefab.meta
-=======
-<<<<<<< HEAD:Assets/Resources/Weapons/FAMAS - Enemy Variant.prefab.meta
-guid: b036edbb950b06c4fa92c07fa3ec7186
->>>>>>> parent of 086590a... Adjusted walker MapGen (Left out current room MapGen)
 =======
 guid: f189460c809e4ad4ea9aa6d44f76709d
 >>>>>>> parent of 086590a... Adjusted walker MapGen (Left out current room MapGen):Assets/Prefabs/MapGenerator.prefab.meta

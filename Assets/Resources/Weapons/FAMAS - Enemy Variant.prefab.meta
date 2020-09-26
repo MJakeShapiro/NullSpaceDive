@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/Resources/Weapons/FAMAS - Enemy Variant.prefab.meta
 guid: b036edbb950b06c4fa92c07fa3ec7186
-=======
-guid: f189460c809e4ad4ea9aa6d44f76709d
->>>>>>> parent of 086590a... Adjusted walker MapGen (Left out current room MapGen):Assets/Prefabs/MapGenerator.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
