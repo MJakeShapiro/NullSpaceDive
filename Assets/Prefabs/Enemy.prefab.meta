@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/Prefabs/Enemy.prefab.meta
 guid: 85ad5c0dab3053c41b7675e9372346e2
-=======
-guid: cad4254b102f7284c978e701f0e2eb9b
->>>>>>> master:Assets/Resources/GameManager.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

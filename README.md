@@ -1,5 +1,4 @@
 # NullSpace/Dive
-
  Unity Game
  
- Warped-space RogueLike. Lots of weapons.
+ Non-Euclidian and warped-space RogueLike, with a strong emphasis on puzzles and special map geometry.
