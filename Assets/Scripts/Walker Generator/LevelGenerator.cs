@@ -21,6 +21,7 @@ public class LevelGenerator : MonoBehaviour {
 	List<walker> walkers;
 	int maxWalkers = 10;
 	int maxChests = 3;
+	public GameObject itemHolder, enemHolder;
 	int maxEnemies = 10;
 	float percentToFill = 0.2f; 
 	public GameObject wallObj, floorObj, chestObj, enemyObj;
@@ -382,6 +383,14 @@ public class LevelGenerator : MonoBehaviour {
 		Vector2 offset = roomSizeWorldUnits / 2.0f;
 		Vector2 spawnPos = new Vector2(x,y) * worldUnitsInOneGridCell - offset;
 		//spawn object
-		Instantiate(toSpawn, spawnPos, Quaternion.identity);
+		GameObject GO = Instantiate(toSpawn, spawnPos, Quaternion.identity);
+		//place object under MapHolder
+		if(toSpawn.name == floorObj.name || toSpawn.name == wallObj.name)
+			GO.transform.parent = this.transform;
+		else if(toSpawn.name == enemyObj.name)
+			GO.transform.parent = enemHolder.transform;
+		else if(toSpawn.name == chestObj.name)
+				GO.transform.parent = itemHolder.transform;	
+		
 	}
 }
