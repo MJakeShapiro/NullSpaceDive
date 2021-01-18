@@ -70,6 +70,7 @@ public class PlayerController : EntityController
             if (mousePosition != Vector2.zero)
             {
                 //float distanceScalar = Camera.main.aspect * Camera.main.orthographicSize * 2 * lookΔDistance; // Converts normalized vector in to screen units
+                #region lookSmoothing
                 if (lookΔSmoothing > 0)
                 {
                     smoothingList.Add(mousePosition);
@@ -81,7 +82,8 @@ public class PlayerController : EntityController
                     lookDirection.Normalize();
                 }
                 else
-                    lookDirection = mousePosition;
+                #endregion
+                lookDirection = mousePosition;
             }
             crosshairPosition = new Vector2(transform.position.x, transform.position.y) + (lookDirection * lookΔDistance);
         }
@@ -89,7 +91,7 @@ public class PlayerController : EntityController
         {
             mousePosition = input.actions.FindAction("Look").ReadValue<Vector2>();
             crosshairPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            lookDirection = (crosshairPosition - (Vector2)transform.position).normalized;
+            lookDirection = crosshairPosition - (Vector2)transform.position;
         }
 
         container.aiming.LookInDirection(lookDirection);

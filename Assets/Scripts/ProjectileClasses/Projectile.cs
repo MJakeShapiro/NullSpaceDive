@@ -209,6 +209,7 @@ public class Projectile : MonoBehaviour
     /// <returns>The Raycasthit2D result of the cast</returns>
     public static RaycastHit2D PhysicsCast (Vector2 origin, Vector2 direction, float radius, float distance)
     {
+        //RaycastHit2D hit = Physics2D.OverlapPoint(origin, LayerMask.GetMask("Entity"));
         if (radius <= 0.05f) // Save resources by using a raycast approximation for small projectiles
             return Physics2D.Raycast(origin, direction, distance, GetProjectileMask());
         else
